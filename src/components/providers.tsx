@@ -12,25 +12,30 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const queryClient = router.options.context.queryClient
 
+  const isDevelopment = process.env.NODE_ENV === "development" || import.meta.env.DEV
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
         <TooltipProvider delayDuration={0}>
           {children}
 
           <Toaster richColors />
-          <TanStackDevtools
-            plugins={[
-              {
-                name: "TanStack Query",
-                render: <ReactQueryDevtoolsPanel />
-              },
-              {
-                name: "TanStack Router",
-                render: <TanStackRouterDevtoolsPanel />
-              }
-            ]}
-          />
+
+          {isDevelopment && (
+            <TanStackDevtools
+              plugins={[
+                {
+                  name: "TanStack Query",
+                  render: <ReactQueryDevtoolsPanel />
+                },
+                {
+                  name: "TanStack Router",
+                  render: <TanStackRouterDevtoolsPanel />
+                }
+              ]}
+            />
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

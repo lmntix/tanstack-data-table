@@ -1,13 +1,13 @@
 "use client"
 
-import { Link, usePathname } from "@tanstack/react-router"
+import { Link, useLocation } from "@tanstack/react-router"
 import { Menu } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { APP_TITLE } from "@/utils/constants"
-import HeaderActions from "../app/dashboard/-components/header-actions"
+import HeaderActions from "./dashboard/header-actions"
 
 // Define the type for navigation menu items
 type NavItem = {
@@ -28,7 +28,8 @@ export const navMenu: NavItem[] = [
 ]
 
 export default function Header() {
-  const pathname = usePathname()
+  const location = useLocation()
+  const pathname = location.pathname
   const [open, setOpen] = useState(false)
 
   return (

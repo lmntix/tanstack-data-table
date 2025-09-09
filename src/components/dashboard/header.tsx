@@ -3,8 +3,8 @@ import { Menu } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { APP_TITLE } from "@/utils/constants"
-import { Button } from "../../../components/ui/button"
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../../../components/ui/sheet"
+import { Button } from "../ui/button"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet"
 import HeaderActions from "./header-actions"
 
 type NavItem = {

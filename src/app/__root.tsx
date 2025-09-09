@@ -6,7 +6,7 @@ import * as React from "react"
 import GlobalErrorComponent from "@/components/global-error"
 import NotFoundComponent from "@/components/not-found"
 import Providers from "@/components/providers"
-import { AuthQueryResult, authQueryOptions } from "@/server/queries/auth"
+import { AuthQueryResult, authQueryOptions } from "@/lib/auth/queries"
 import appCss from "@/styles.css?url"
 import { seo } from "@/utils/seo"
 
@@ -15,13 +15,7 @@ export const Route = createRootRouteWithContext<{
   user: AuthQueryResult
 }>()({
   beforeLoad: ({ context }) => {
-    // we're using react-query for client-side caching to reduce client-to-server calls, see /src/router.tsx
-    // better-auth's cookieCache is also enabled server-side to reduce server-to-db calls, see /src/lib/auth/auth.ts
     context.queryClient.prefetchQuery(authQueryOptions())
-
-    // typically we don't need the user immediately in landing pages,
-    // so we're only prefetching here and not awaiting.
-    // for protected routes with loader data, see /(authenticated)/route.tsx
   },
   head: () => ({
     meta: [
@@ -70,6 +64,7 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
       </head>
       <body>
         <Providers>{children}</Providers>
+
         <Scripts />
       </body>
     </html>

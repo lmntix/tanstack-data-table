@@ -8,114 +8,114 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from "@tanstack/react-start/server";
+import { createServerRootRoute } from "@tanstack/react-start/server"
 
-import { Route as rootRouteImport } from "./app/__root";
-import { Route as DashboardLayoutRouteImport } from "./app/dashboard/_layout";
-import { Route as AuthLayoutRouteImport } from "./app/_auth/_layout";
-import { Route as IndexRouteImport } from "./app/index";
-import { Route as DashboardIndexRouteImport } from "./app/dashboard/index";
-import { Route as DashboardSettingsRouteImport } from "./app/dashboard/settings";
-import { Route as DashboardAdminRouteImport } from "./app/dashboard/admin";
-import { Route as AuthResetPasswordRouteImport } from "./app/_auth/reset-password";
-import { Route as AuthRegisterRouteImport } from "./app/_auth/register";
-import { Route as AuthLoginRouteImport } from "./app/_auth/login";
-import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password";
-import { ServerRoute as ApiAuthSplatServerRouteImport } from "./app/api/auth.$";
+import { Route as rootRouteImport } from "./app/__root"
+import { Route as DashboardLayoutRouteImport } from "./app/dashboard/_layout"
+import { Route as AuthLayoutRouteImport } from "./app/_auth/_layout"
+import { Route as IndexRouteImport } from "./app/index"
+import { Route as DashboardIndexRouteImport } from "./app/dashboard/index"
+import { Route as DashboardSettingsRouteImport } from "./app/dashboard/settings"
+import { Route as DashboardAdminRouteImport } from "./app/dashboard/admin"
+import { Route as AuthResetPasswordRouteImport } from "./app/_auth/reset-password"
+import { Route as AuthRegisterRouteImport } from "./app/_auth/register"
+import { Route as AuthLoginRouteImport } from "./app/_auth/login"
+import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password"
+import { ServerRoute as ApiAuthSplatServerRouteImport } from "./app/api/auth.$"
 
-const rootServerRouteImport = createServerRootRoute();
+const rootServerRouteImport = createServerRootRoute()
 
 const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
   id: "/_auth",
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => DashboardLayoutRoute,
-} as any);
+} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: "/settings",
   path: "/settings",
   getParentRoute: () => DashboardLayoutRoute,
-} as any);
+} as any)
 const DashboardAdminRoute = DashboardAdminRouteImport.update({
   id: "/admin",
   path: "/admin",
   getParentRoute: () => DashboardLayoutRoute,
-} as any);
+} as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: "/reset-password",
   path: "/reset-password",
   getParentRoute: () => AuthLayoutRoute,
-} as any);
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: "/register",
   path: "/register",
   getParentRoute: () => AuthLayoutRoute,
-} as any);
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: "/login",
   path: "/login",
   getParentRoute: () => AuthLayoutRoute,
-} as any);
+} as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: "/forgot-password",
   path: "/forgot-password",
   getParentRoute: () => AuthLayoutRoute,
-} as any);
+} as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: "/api/auth/$",
   path: "/api/auth/$",
   getParentRoute: () => rootServerRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/dashboard": typeof DashboardLayoutRouteWithChildren;
-  "/forgot-password": typeof AuthForgotPasswordRoute;
-  "/login": typeof AuthLoginRoute;
-  "/register": typeof AuthRegisterRoute;
-  "/reset-password": typeof AuthResetPasswordRoute;
-  "/dashboard/admin": typeof DashboardAdminRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
+  "/": typeof IndexRoute
+  "/dashboard": typeof DashboardLayoutRouteWithChildren
+  "/forgot-password": typeof AuthForgotPasswordRoute
+  "/login": typeof AuthLoginRoute
+  "/register": typeof AuthRegisterRoute
+  "/reset-password": typeof AuthResetPasswordRoute
+  "/dashboard/admin": typeof DashboardAdminRoute
+  "/dashboard/settings": typeof DashboardSettingsRoute
+  "/dashboard/": typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/forgot-password": typeof AuthForgotPasswordRoute;
-  "/login": typeof AuthLoginRoute;
-  "/register": typeof AuthRegisterRoute;
-  "/reset-password": typeof AuthResetPasswordRoute;
-  "/dashboard/admin": typeof DashboardAdminRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard": typeof DashboardIndexRoute;
+  "/": typeof IndexRoute
+  "/forgot-password": typeof AuthForgotPasswordRoute
+  "/login": typeof AuthLoginRoute
+  "/register": typeof AuthRegisterRoute
+  "/reset-password": typeof AuthResetPasswordRoute
+  "/dashboard/admin": typeof DashboardAdminRoute
+  "/dashboard/settings": typeof DashboardSettingsRoute
+  "/dashboard": typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/_auth": typeof AuthLayoutRouteWithChildren;
-  "/dashboard": typeof DashboardLayoutRouteWithChildren;
-  "/_auth/forgot-password": typeof AuthForgotPasswordRoute;
-  "/_auth/login": typeof AuthLoginRoute;
-  "/_auth/register": typeof AuthRegisterRoute;
-  "/_auth/reset-password": typeof AuthResetPasswordRoute;
-  "/dashboard/admin": typeof DashboardAdminRoute;
-  "/dashboard/settings": typeof DashboardSettingsRoute;
-  "/dashboard/": typeof DashboardIndexRoute;
+  __root__: typeof rootRouteImport
+  "/": typeof IndexRoute
+  "/_auth": typeof AuthLayoutRouteWithChildren
+  "/dashboard": typeof DashboardLayoutRouteWithChildren
+  "/_auth/forgot-password": typeof AuthForgotPasswordRoute
+  "/_auth/login": typeof AuthLoginRoute
+  "/_auth/register": typeof AuthRegisterRoute
+  "/_auth/reset-password": typeof AuthResetPasswordRoute
+  "/dashboard/admin": typeof DashboardAdminRoute
+  "/dashboard/settings": typeof DashboardSettingsRoute
+  "/dashboard/": typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | "/"
     | "/dashboard"
@@ -125,8 +125,8 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/dashboard/admin"
     | "/dashboard/settings"
-    | "/dashboard/";
-  fileRoutesByTo: FileRoutesByTo;
+    | "/dashboard/"
+  fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
     | "/forgot-password"
@@ -135,7 +135,7 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/dashboard/admin"
     | "/dashboard/settings"
-    | "/dashboard";
+    | "/dashboard"
   id:
     | "__root__"
     | "/"
@@ -147,127 +147,127 @@ export interface FileRouteTypes {
     | "/_auth/reset-password"
     | "/dashboard/admin"
     | "/dashboard/settings"
-    | "/dashboard/";
-  fileRoutesById: FileRoutesById;
+    | "/dashboard/"
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren;
-  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren;
+  IndexRoute: typeof IndexRoute
+  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
-  "/api/auth/$": typeof ApiAuthSplatServerRoute;
+  "/api/auth/$": typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRoutesByTo {
-  "/api/auth/$": typeof ApiAuthSplatServerRoute;
+  "/api/auth/$": typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport;
-  "/api/auth/$": typeof ApiAuthSplatServerRoute;
+  __root__: typeof rootServerRouteImport
+  "/api/auth/$": typeof ApiAuthSplatServerRoute
 }
 export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath;
-  fullPaths: "/api/auth/$";
-  fileServerRoutesByTo: FileServerRoutesByTo;
-  to: "/api/auth/$";
-  id: "__root__" | "/api/auth/$";
-  fileServerRoutesById: FileServerRoutesById;
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths: "/api/auth/$"
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to: "/api/auth/$"
+  id: "__root__" | "/api/auth/$"
+  fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute;
+  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
     "/dashboard": {
-      id: "/dashboard";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof DashboardLayoutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: "/dashboard"
+      path: "/dashboard"
+      fullPath: "/dashboard"
+      preLoaderRoute: typeof DashboardLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/_auth": {
-      id: "/_auth";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof AuthLayoutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: "/_auth"
+      path: ""
+      fullPath: ""
+      preLoaderRoute: typeof AuthLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: "/"
+      path: "/"
+      fullPath: "/"
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/dashboard/": {
-      id: "/dashboard/";
-      path: "/";
-      fullPath: "/dashboard/";
-      preLoaderRoute: typeof DashboardIndexRouteImport;
-      parentRoute: typeof DashboardLayoutRoute;
-    };
+      id: "/dashboard/"
+      path: "/"
+      fullPath: "/dashboard/"
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     "/dashboard/settings": {
-      id: "/dashboard/settings";
-      path: "/settings";
-      fullPath: "/dashboard/settings";
-      preLoaderRoute: typeof DashboardSettingsRouteImport;
-      parentRoute: typeof DashboardLayoutRoute;
-    };
+      id: "/dashboard/settings"
+      path: "/settings"
+      fullPath: "/dashboard/settings"
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     "/dashboard/admin": {
-      id: "/dashboard/admin";
-      path: "/admin";
-      fullPath: "/dashboard/admin";
-      preLoaderRoute: typeof DashboardAdminRouteImport;
-      parentRoute: typeof DashboardLayoutRoute;
-    };
+      id: "/dashboard/admin"
+      path: "/admin"
+      fullPath: "/dashboard/admin"
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof DashboardLayoutRoute
+    }
     "/_auth/reset-password": {
-      id: "/_auth/reset-password";
-      path: "/reset-password";
-      fullPath: "/reset-password";
-      preLoaderRoute: typeof AuthResetPasswordRouteImport;
-      parentRoute: typeof AuthLayoutRoute;
-    };
+      id: "/_auth/reset-password"
+      path: "/reset-password"
+      fullPath: "/reset-password"
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     "/_auth/register": {
-      id: "/_auth/register";
-      path: "/register";
-      fullPath: "/register";
-      preLoaderRoute: typeof AuthRegisterRouteImport;
-      parentRoute: typeof AuthLayoutRoute;
-    };
+      id: "/_auth/register"
+      path: "/register"
+      fullPath: "/register"
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     "/_auth/login": {
-      id: "/_auth/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof AuthLoginRouteImport;
-      parentRoute: typeof AuthLayoutRoute;
-    };
+      id: "/_auth/login"
+      path: "/login"
+      fullPath: "/login"
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
     "/_auth/forgot-password": {
-      id: "/_auth/forgot-password";
-      path: "/forgot-password";
-      fullPath: "/forgot-password";
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport;
-      parentRoute: typeof AuthLayoutRoute;
-    };
+      id: "/_auth/forgot-password"
+      path: "/forgot-password"
+      fullPath: "/forgot-password"
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof AuthLayoutRoute
+    }
   }
 }
 declare module "@tanstack/react-start/server" {
   interface ServerFileRoutesByPath {
     "/api/auth/$": {
-      id: "/api/auth/$";
-      path: "/api/auth/$";
-      fullPath: "/api/auth/$";
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport;
-      parentRoute: typeof rootServerRouteImport;
-    };
+      id: "/api/auth/$"
+      path: "/api/auth/$"
+      fullPath: "/api/auth/$"
+      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
   }
 }
 
 interface AuthLayoutRouteChildren {
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute;
-  AuthLoginRoute: typeof AuthLoginRoute;
-  AuthRegisterRoute: typeof AuthRegisterRoute;
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute;
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
 const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
@@ -275,39 +275,39 @@ const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
-};
+}
 
 const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
   AuthLayoutRouteChildren,
-);
+)
 
 interface DashboardLayoutRouteChildren {
-  DashboardAdminRoute: typeof DashboardAdminRoute;
-  DashboardSettingsRoute: typeof DashboardSettingsRoute;
-  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-};
+}
 
 const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
   DashboardLayoutRouteChildren,
-);
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 const rootServerRouteChildren: RootServerRouteChildren = {
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
-};
+}
 export const serverRouteTree = rootServerRouteImport
   ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>();
+  ._addFileTypes<FileServerRouteTypes>()

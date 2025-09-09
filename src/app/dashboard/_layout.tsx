@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
-import Header from "@/app/dashboard/-components/header"
-import { authQueryOptions } from "@/server/queries/auth"
+import Header from "@/components/dashboard/header"
+import { authQueryOptions } from "@/lib/auth/queries"
 
 export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,

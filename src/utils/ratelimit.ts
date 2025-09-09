@@ -1,4 +1,4 @@
-import { headers } from "next/headers"
+import { getWebRequest } from "@tanstack/react-start/server"
 import { RateLimiterMemory, type RateLimiterRes } from "rate-limiter-flexible"
 
 interface LimiterOptions {
@@ -18,9 +18,9 @@ interface LimitResponse {
 }
 
 export async function getUserIP(): Promise<string> {
-  const headersList = await headers()
+  const request = getWebRequest()
 
-  const ip = headersList.get("x-forwarded-for")?.split(",")[0] || headersList.get("x-real-ip") || "127.0.0.1" // Fallback for local development
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || request.headers.get("x-real-ip") || "127.0.0.1" // Fallback for local development
 
   return ip
 }
