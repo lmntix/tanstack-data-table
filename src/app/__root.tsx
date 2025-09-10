@@ -6,17 +6,12 @@ import * as React from "react"
 import GlobalErrorComponent from "@/components/global-error"
 import NotFoundComponent from "@/components/not-found"
 import Providers from "@/components/providers"
-import { AuthQueryResult, authQueryOptions } from "@/lib/auth/queries"
 import appCss from "@/styles.css?url"
 import { seo } from "@/utils/seo"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
-  user: AuthQueryResult
 }>()({
-  beforeLoad: ({ context }) => {
-    context.queryClient.prefetchQuery(authQueryOptions())
-  },
   head: () => ({
     meta: [
       {

@@ -1,21 +1,10 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 import Header from "@/components/dashboard/header"
-import { authQueryOptions } from "@/lib/auth/queries"
+import { assertAuthenticatedFn } from "@/server/functions/auth"
 
 export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    const user = await context.queryClient.ensureQueryData({
-      ...authQueryOptions(),
-      revalidateIfStale: true
-    })
-    if (!user) {
-      throw redirect({ to: "/login" })
-    }
-
-    // re-return to update type as non-null for child routes
-    return { user }
-  }
+  beforeLoad: () => assertAuthenticatedFn()
 })
 
 function RouteComponent() {

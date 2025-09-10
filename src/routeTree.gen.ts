@@ -21,6 +21,7 @@ import { Route as AuthResetPasswordRouteImport } from "./app/_auth/reset-passwor
 import { Route as AuthRegisterRouteImport } from "./app/_auth/register"
 import { Route as AuthLoginRouteImport } from "./app/_auth/login"
 import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password"
+import { Route as OrganizationsSplatDashboardRouteImport } from "./app/organizations.$.dashboard"
 import { ServerRoute as ApiAuthSplatServerRouteImport } from "./app/api/auth.$"
 
 const rootServerRouteImport = createServerRootRoute()
@@ -74,6 +75,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: "/forgot-password",
   getParentRoute: () => AuthLayoutRoute,
 } as any)
+const OrganizationsSplatDashboardRoute =
+  OrganizationsSplatDashboardRouteImport.update({
+    id: "/organizations/$/dashboard",
+    path: "/organizations/$/dashboard",
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: "/api/auth/$",
   path: "/api/auth/$",
@@ -90,6 +97,7 @@ export interface FileRoutesByFullPath {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
+  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByTo {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard": typeof DashboardIndexRoute
+  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,6 +122,7 @@ export interface FileRoutesById {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
+  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
+    | "/organizations/$/dashboard"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard"
+    | "/organizations/$/dashboard"
   id:
     | "__root__"
     | "/"
@@ -148,12 +160,14 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
+    | "/organizations/$/dashboard"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
+  OrganizationsSplatDashboardRoute: typeof OrganizationsSplatDashboardRoute
 }
 export interface FileServerRoutesByFullPath {
   "/api/auth/$": typeof ApiAuthSplatServerRoute
@@ -249,6 +263,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    "/organizations/$/dashboard": {
+      id: "/organizations/$/dashboard"
+      path: "/organizations/$/dashboard"
+      fullPath: "/organizations/$/dashboard"
+      preLoaderRoute: typeof OrganizationsSplatDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 declare module "@tanstack/react-start/server" {
@@ -301,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
+  OrganizationsSplatDashboardRoute: OrganizationsSplatDashboardRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

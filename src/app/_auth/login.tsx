@@ -1,80 +1,93 @@
 import { useForm } from "@tanstack/react-form"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
-import { useId, useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { useId } from "react"
 import { toast } from "sonner"
-import z from "zod"
+import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import LoadingButton from "@/components/ui/loading-button"
+import { SubmitButton } from "@/components/ui/submit-button"
 import { authClient } from "@/lib/auth/auth-client"
 import { cn } from "@/lib/utils"
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8)
+  email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters")
 })
+
+type LoginFormData = z.infer<typeof loginSchema>
 
 export const Route = createFileRoute("/_auth/login")({
   component: LoginForm
 })
 
-function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
-  const [pendingCredentials, setPendingCredentials] = useState(false)
+function LoginForm() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const login = async (data: LoginFormData) => {
+    const { error, data: response } = await authClient.signIn.email({
+      email: data.email,
+      password: data.password
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return response
+  }
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (response) => {
+      toast.success(`Hey ${response.user.name}, welcome back!`)
+
+      queryClient.resetQueries()
+      navigate({ to: "/dashboard" })
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to login. Please try again.")
+    }
+  })
+
   const emailId = useId()
   const passwordId = useId()
-
-  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
       email: "",
       password: ""
+    } as LoginFormData,
+    validators: {
+      onSubmit: ({ value }) => {
+        const result = loginSchema.safeParse(value)
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {}
+          result.error.issues.forEach((issue) => {
+            const field = issue.path[0] as keyof LoginFormData
+            if (field) {
+              fieldErrors[field] = issue.message
+            }
+          })
+          return fieldErrors
+        }
+        return undefined
+      }
     },
     onSubmit: async ({ value }) => {
-      // Validate using Zod
-      const result = loginSchema.safeParse(value)
-      if (!result.success) {
-        // Handle validation errors
-        result.error.issues.forEach((issue) => {
-          toast.error(issue.message)
-        })
-        return
-      }
-
-      setPendingCredentials(true)
-      try {
-        await authClient.signIn.email(
-          {
-            email: result.data.email,
-            password: result.data.password
-          },
-          {
-            onSuccess: async () => {
-              toast.success("Login successful")
-              router.navigate({ to: "/dashboard" })
-            },
-            onError: async (ctx) => {
-              toast.error(ctx.error.message ?? "Something went wrong.")
-            }
-          }
-        )
-      } catch {
-        toast.error("Login failed. Please try again.")
-      } finally {
-        setPendingCredentials(false)
-      }
+      await loginMutation.mutateAsync(value)
     }
   })
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6")}
       onSubmit={(e) => {
         e.preventDefault()
-        e.stopPropagation()
+
         form.handleSubmit()
       }}
-      {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="font-bold text-2xl">Login to your account</h1>
@@ -86,10 +99,9 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
           <form.Field
             name="email"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Email is required"
-                const emailResult = z.string().email().safeParse(value)
-                return emailResult.success ? undefined : "Please enter a valid email"
+              onBlur: ({ value }) => {
+                const result = loginSchema.shape.email.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -122,10 +134,9 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
           <form.Field
             name="password"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Password is required"
-                if (value.length < 8) return "Password must be at least 8 characters"
-                return undefined
+              onBlur: ({ value }) => {
+                const result = loginSchema.shape.password.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -147,7 +158,7 @@ function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"form
             )}
           </form.Field>
         </div>
-        <LoadingButton pending={pendingCredentials}>Login</LoadingButton>
+        <SubmitButton isSubmitting={loginMutation.isPending}>Login</SubmitButton>
       </div>
 
       <div className="text-center text-sm">

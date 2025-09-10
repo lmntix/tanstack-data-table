@@ -1,61 +1,78 @@
 import { useForm } from "@tanstack/react-form"
+import { useMutation } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowLeft, CheckCircle2 } from "lucide-react"
 import { useId, useState } from "react"
 import { toast } from "sonner"
-import z from "zod"
+import { z } from "zod"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import LoadingButton from "@/components/ui/loading-button"
+import { SubmitButton } from "@/components/ui/submit-button"
 import { authClient } from "@/lib/auth/auth-client"
 import { cn } from "@/lib/utils"
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email()
+  email: z.string().min(1, "Email is required").email("Please enter a valid email")
 })
+
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
 
 export const Route = createFileRoute("/_auth/forgot-password")({
   component: ForgotPasswordForm
 })
 
-function ForgotPasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
+function ForgotPasswordForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const forgotPassword = async (data: ForgotPasswordFormData) => {
+    const { error } = await authClient.forgetPassword({
+      email: data.email,
+      redirectTo: "/reset-password"
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return { success: true }
+  }
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: () => {
+      setIsSubmitted(true)
+    },
+    onError: (error) => {
+      toast.error(error.message || "An error occurred. Please try again.")
+    }
+  })
+
   const emailId = useId()
 
   const form = useForm({
     defaultValues: {
       email: ""
+    } as ForgotPasswordFormData,
+    validators: {
+      onSubmit: ({ value }) => {
+        const result = forgotPasswordSchema.safeParse(value)
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {}
+          result.error.issues.forEach((issue) => {
+            const field = issue.path[0] as keyof ForgotPasswordFormData
+            if (field) {
+              fieldErrors[field] = issue.message
+            }
+          })
+          return fieldErrors
+        }
+        return undefined
+      }
     },
     onSubmit: async ({ value }) => {
-      // Validate using Zod
-      const result = forgotPasswordSchema.safeParse(value)
-      if (!result.success) {
-        result.error.issues.forEach((issue) => {
-          toast.error(issue.message)
-        })
-        return
-      }
-
-      setIsSubmitting(true)
-      try {
-        const { error } = await authClient.forgetPassword({
-          email: result.data.email,
-          redirectTo: "/reset-password"
-        })
-        if (error) {
-          toast.error(error.message)
-          return
-        }
-        setIsSubmitted(true)
-      } catch {
-        console.error("[ForgotPassword] An error occurred")
-        toast.error("An error occurred. Please try again.")
-      } finally {
-        setIsSubmitting(false)
-      }
+      await forgotPasswordMutation.mutateAsync(value)
     }
   })
 
@@ -84,13 +101,12 @@ function ForgotPasswordForm({ className, ...props }: React.ComponentPropsWithout
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6")}
       onSubmit={(e) => {
         e.preventDefault()
-        e.stopPropagation()
+
         form.handleSubmit()
       }}
-      {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="font-bold text-2xl">Forgot your password?</h1>
@@ -102,10 +118,9 @@ function ForgotPasswordForm({ className, ...props }: React.ComponentPropsWithout
           <form.Field
             name="email"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Email is required"
-                const emailResult = z.string().email().safeParse(value)
-                return emailResult.success ? undefined : "Please enter a valid email"
+              onBlur: ({ value }) => {
+                const result = forgotPasswordSchema.shape.email.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -127,7 +142,7 @@ function ForgotPasswordForm({ className, ...props }: React.ComponentPropsWithout
             )}
           </form.Field>
         </div>
-        <LoadingButton pending={isSubmitting}>Send reset link</LoadingButton>
+        <SubmitButton isSubmitting={forgotPasswordMutation.isPending}>Send reset link</SubmitButton>
       </div>
 
       <div className="text-center text-sm">

@@ -1,27 +1,11 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router"
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router"
 import { Logo } from "@/components/logo"
 import ThemeToggle from "@/components/theme-toggle"
-import { authQueryOptions } from "@/lib/auth/queries"
+import { assertUnauthenticatedFn } from "@/server/functions/auth"
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,
-  beforeLoad: async ({ context }) => {
-    const REDIRECT_URL = "/dashboard"
-
-    const user = await context.queryClient.ensureQueryData({
-      ...authQueryOptions(),
-      revalidateIfStale: true
-    })
-    if (user) {
-      throw redirect({
-        to: REDIRECT_URL
-      })
-    }
-
-    return {
-      redirectUrl: REDIRECT_URL
-    }
-  }
+  beforeLoad: () => assertUnauthenticatedFn()
 })
 
 function RouteComponent() {

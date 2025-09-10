@@ -1,32 +1,64 @@
 import { useForm } from "@tanstack/react-form"
-import { createFileRoute, Link } from "@tanstack/react-router"
-import { useId, useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { useId } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import LoadingButton from "@/components/ui/loading-button"
+import { SubmitButton } from "@/components/ui/submit-button"
 import { authClient } from "@/lib/auth/auth-client"
 import { cn } from "@/lib/utils"
 
-const signUpSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string()
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"]
-  })
+const signUpSchema = z.object({
+  name: z.string().min(1, "Name is required").min(2, "Name must be at least 2 characters"),
+  email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password")
+})
+
+type SignUpFormData = z.infer<typeof signUpSchema>
 
 export const Route = createFileRoute("/_auth/register")({
   component: RegisterForm
 })
 
-function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
-  const [pending, setPending] = useState(false)
+function RegisterForm() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const signUp = async (data: SignUpFormData) => {
+    // Check if passwords match
+    if (data.password !== data.confirmPassword) {
+      throw new Error("Passwords don't match")
+    }
+
+    const { error, data: response } = await authClient.signUp.email({
+      email: data.email,
+      password: data.password,
+      name: data.name
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return response
+  }
+
+  const signUpMutation = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      toast.success("Your account has been created. Check your email for a verification link.")
+
+      queryClient.resetQueries()
+      navigate({ to: "/login" })
+    },
+    onError: (error) => {
+      toast.error(error.message || "Registration failed. Please try again.")
+    }
+  })
+
   const nameId = useId()
   const emailId = useId()
   const passwordId = useId()
@@ -38,67 +70,54 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
       email: "",
       password: "",
       confirmPassword: ""
+    } as SignUpFormData,
+    validators: {
+      onSubmit: ({ value }) => {
+        const result = signUpSchema.safeParse(value)
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {}
+          result.error.issues.forEach((issue) => {
+            const field = issue.path[0] as keyof SignUpFormData
+            if (field) {
+              fieldErrors[field] = issue.message
+            }
+          })
+          return fieldErrors
+        }
+        // Additional check for password match
+        if (value.password !== value.confirmPassword) {
+          return { confirmPassword: "Passwords don't match" }
+        }
+        return undefined
+      }
     },
     onSubmit: async ({ value }) => {
-      // Validate using Zod
-      const result = signUpSchema.safeParse(value)
-      if (!result.success) {
-        result.error.issues.forEach((issue) => {
-          toast.error(issue.message)
-        })
-        return
-      }
-
-      setPending(true)
-      try {
-        await authClient.signUp.email(
-          {
-            email: result.data.email,
-            password: result.data.password,
-            name: result.data.name,
-            callbackURL: "/auth/login"
-          },
-          {
-            onSuccess: async () => {
-              toast.info("Your account has been created. Check your email for a verification link.")
-            },
-            onError: async (ctx) => {
-              toast.error(ctx.error.message ?? "Something went wrong.")
-            }
-          }
-        )
-      } catch {
-        toast.error("Registration failed. Please try again.")
-      } finally {
-        setPending(false)
-      }
+      await signUpMutation.mutateAsync(value)
     }
   })
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6")}
       onSubmit={(e) => {
         e.preventDefault()
-        e.stopPropagation()
+
         form.handleSubmit()
       }}
-      {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="font-bold text-2xl">Create an account</h1>
         <p className="text-balance text-muted-foreground text-sm">Enter your details below to create your account</p>
       </div>
-      <div className="grid gap-2">
+      <div className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor={nameId}>Name</Label>
           <form.Field
             name="name"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Name is required"
-                if (value.length < 2) return "Name must be at least 2 characters"
-                return undefined
+              onBlur: ({ value }) => {
+                const result = signUpSchema.shape.name.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -124,10 +143,9 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
           <form.Field
             name="email"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Email is required"
-                const emailResult = z.string().email().safeParse(value)
-                return emailResult.success ? undefined : "Please enter a valid email"
+              onBlur: ({ value }) => {
+                const result = signUpSchema.shape.email.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -135,7 +153,7 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
               <div>
                 <Input
                   id={emailId}
-                  placeholder="Enter your email"
+                  placeholder="m@example.com"
                   type="email"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
@@ -154,10 +172,9 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
           <form.Field
             name="password"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Password is required"
-                if (value.length < 8) return "Password must be at least 8 characters"
-                return undefined
+              onBlur: ({ value }) => {
+                const result = signUpSchema.shape.password.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -184,10 +201,15 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
           <form.Field
             name="confirmPassword"
             validators={{
-              onChange: ({ value, fieldApi }) => {
-                if (!value) return "Please confirm your password"
+              onBlur: ({ value, fieldApi }) => {
+                const result = signUpSchema.shape.confirmPassword.safeParse(value)
+                if (!result.success) {
+                  return result.error.issues[0]?.message
+                }
                 const password = fieldApi.form.getFieldValue("password")
-                if (password && value !== password) return "Passwords don't match"
+                if (password && value !== password) {
+                  return "Passwords don't match"
+                }
                 return undefined
               }
             }}
@@ -210,7 +232,7 @@ function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<"f
             )}
           </form.Field>
         </div>
-        <LoadingButton pending={pending}>Sign up</LoadingButton>
+        <SubmitButton isSubmitting={signUpMutation.isPending}>Sign up</SubmitButton>
       </div>
 
       <div className="text-center text-sm">

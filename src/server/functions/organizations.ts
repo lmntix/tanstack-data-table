@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start"
 import { and, eq } from "drizzle-orm"
 import db from "@/server/db"
 import { tryCatch } from "@/utils/try-catch"
-import { organizations, orgMembers } from "../db/schema"
+import { invitations, organizations, orgMembers } from "../db/schema"
 import { authMiddleware } from "./middlewares"
 
 export const getUserOrganizationsFn = createServerFn({ method: "GET" })
@@ -29,6 +29,19 @@ export const getUserOrganizationsFn = createServerFn({ method: "GET" })
 
     if (result.error) {
       console.error("Error getting organization list for user", result.error)
+      return []
+    }
+
+    return result.data
+  })
+
+export const getUserInvitationsFn = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const result = await tryCatch(db.select().from(invitations).where(eq(invitations.email, context.user.email)))
+
+    if (result.error) {
+      console.error("Error getting user invitations", result.error)
       return []
     }
 

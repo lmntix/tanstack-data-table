@@ -1,26 +1,24 @@
 import { useForm } from "@tanstack/react-form"
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router"
+import { useMutation } from "@tanstack/react-query"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { AlertCircle } from "lucide-react"
-import { useId, useState } from "react"
+import { useId } from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import LoadingButton from "@/components/ui/loading-button"
 import { PasswordInput } from "@/components/ui/password-input"
+import { SubmitButton } from "@/components/ui/submit-button"
 import { authClient } from "@/lib/auth/auth-client"
 import { cn } from "@/lib/utils"
 
-const resetPasswordSchema = z
-  .object({
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string()
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"]
-  })
+const resetPasswordSchema = z.object({
+  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password")
+})
+
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
 export const Route = createFileRoute("/_auth/reset-password")({
   component: ResetPasswordForm,
@@ -29,10 +27,39 @@ export const Route = createFileRoute("/_auth/reset-password")({
   })
 })
 
-function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<"form">) {
+function ResetPasswordForm() {
   const { token } = Route.useSearch()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
+  const navigate = useNavigate()
+
+  const resetPassword = async (data: ResetPasswordFormData) => {
+    // Check if passwords match
+    if (data.password !== data.confirmPassword) {
+      throw new Error("Passwords don't match")
+    }
+
+    const { error } = await authClient.resetPassword({
+      newPassword: data.password,
+      token
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return { success: true }
+  }
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: () => {
+      toast.success("Password reset successful")
+      navigate({ to: "/login" })
+    },
+    onError: (error) => {
+      toast.error(error.message || "Password reset failed. Please try again.")
+    }
+  })
+
   const passwordId = useId()
   const confirmPasswordId = useId()
 
@@ -40,34 +67,29 @@ function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutR
     defaultValues: {
       password: "",
       confirmPassword: ""
+    } as ResetPasswordFormData,
+    validators: {
+      onSubmit: ({ value }) => {
+        const result = resetPasswordSchema.safeParse(value)
+        if (!result.success) {
+          const fieldErrors: Record<string, string> = {}
+          result.error.issues.forEach((issue) => {
+            const field = issue.path[0] as keyof ResetPasswordFormData
+            if (field) {
+              fieldErrors[field] = issue.message
+            }
+          })
+          return fieldErrors
+        }
+        // Additional check for password match
+        if (value.password !== value.confirmPassword) {
+          return { confirmPassword: "Passwords don't match" }
+        }
+        return undefined
+      }
     },
     onSubmit: async ({ value }) => {
-      // Validate using Zod
-      const result = resetPasswordSchema.safeParse(value)
-      if (!result.success) {
-        result.error.issues.forEach((issue) => {
-          toast.error(issue.message)
-        })
-        return
-      }
-
-      setIsSubmitting(true)
-      try {
-        const { error } = await authClient.resetPassword({
-          newPassword: result.data.password,
-          token
-        })
-        if (error) {
-          toast.error(error.message)
-        } else {
-          toast.success("Password reset successful")
-          router.navigate({ to: "/login" })
-        }
-      } catch {
-        toast.error("Password reset failed. Please try again.")
-      } finally {
-        setIsSubmitting(false)
-      }
+      await resetPasswordMutation.mutateAsync(value)
     }
   })
 
@@ -100,13 +122,12 @@ function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutR
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6")}
       onSubmit={(e) => {
         e.preventDefault()
-        e.stopPropagation()
+
         form.handleSubmit()
       }}
-      {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="font-bold text-2xl">Reset your password</h1>
@@ -120,10 +141,9 @@ function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutR
           <form.Field
             name="password"
             validators={{
-              onChange: ({ value }) => {
-                if (!value) return "Password is required"
-                if (value.length < 8) return "Password must be at least 8 characters"
-                return undefined
+              onBlur: ({ value }) => {
+                const result = resetPasswordSchema.shape.password.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
           >
@@ -149,10 +169,15 @@ function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutR
           <form.Field
             name="confirmPassword"
             validators={{
-              onChange: ({ value, fieldApi }) => {
-                if (!value) return "Please confirm your password"
+              onBlur: ({ value, fieldApi }) => {
+                const result = resetPasswordSchema.shape.confirmPassword.safeParse(value)
+                if (!result.success) {
+                  return result.error.issues[0]?.message
+                }
                 const password = fieldApi.form.getFieldValue("password")
-                if (password && value !== password) return "Passwords don't match"
+                if (password && value !== password) {
+                  return "Passwords don't match"
+                }
                 return undefined
               }
             }}
@@ -174,7 +199,7 @@ function ResetPasswordForm({ className, ...props }: React.ComponentPropsWithoutR
             )}
           </form.Field>
         </div>
-        <LoadingButton pending={isSubmitting}>Reset password</LoadingButton>
+        <SubmitButton isSubmitting={resetPasswordMutation.isPending}>Reset password</SubmitButton>
       </div>
 
       <div className="text-center text-sm">

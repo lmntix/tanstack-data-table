@@ -57,6 +57,7 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "off",
+        "noChildrenProp": "off",
         "noUnusedImports": {
           "fix": "safe",
           "level": "info"
