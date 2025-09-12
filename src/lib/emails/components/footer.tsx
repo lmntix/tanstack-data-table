@@ -1,5 +1,5 @@
 import { Column, Img, Link, Row, Section, Text } from "@react-email/components"
-import { env } from "@/env/client"
+import { env } from "@/lib/env/client"
 
 const appUrl = env.VITE_APP_URL
 

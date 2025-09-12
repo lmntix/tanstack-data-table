@@ -1,7 +1,6 @@
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFieldContext } from "@/hooks/form"
-
-import { Label } from "../ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 type Props<TType extends "string" | "number" = "string"> = {
   label: string

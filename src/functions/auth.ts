@@ -12,7 +12,7 @@ export const assertAuthenticatedFn = createServerFn({ method: "GET" }).handler(a
     })
   }
 
-  return session.user
+  return { user: session.user, session: session.session }
 })
 
 export const assertUnauthenticatedFn = createServerFn({ method: "GET" }).handler(async () => {
@@ -32,4 +32,12 @@ export const $getUser = createServerFn({ method: "GET" }).handler(async () => {
   const session = await auth.api.getSession({ headers: getWebRequest().headers })
 
   return session?.user || null
+})
+
+export const assertIsAdminFn = createServerFn({ method: "GET" }).handler(async () => {
+  const { user } = await assertAuthenticatedFn()
+
+  if (user?.role !== "admin") {
+    throw redirect({ to: "/unauthorized" })
+  }
 })

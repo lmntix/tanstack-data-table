@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router"
 import { Logo } from "@/components/logo"
 import ThemeToggle from "@/components/theme-toggle"
-import { assertUnauthenticatedFn } from "@/server/functions/auth"
+import { assertUnauthenticatedFn } from "@/functions/auth"
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,

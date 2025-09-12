@@ -1,6 +1,6 @@
 import { createInsertSchema } from "drizzle-zod"
 import z from "zod"
-import { savingPlans } from "@/server/db/schema"
+import { savingPlans } from "@/lib/db/schema"
 
 export const CreateSavingPlanSchema = createInsertSchema(savingPlans).omit({
   id: true,

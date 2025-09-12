@@ -11,6 +11,7 @@
 import { createServerRootRoute } from "@tanstack/react-start/server"
 
 import { Route as rootRouteImport } from "./app/__root"
+import { Route as UnauthorizedRouteImport } from "./app/unauthorized"
 import { Route as DashboardLayoutRouteImport } from "./app/dashboard/_layout"
 import { Route as AuthLayoutRouteImport } from "./app/_auth/_layout"
 import { Route as IndexRouteImport } from "./app/index"
@@ -21,11 +22,20 @@ import { Route as AuthResetPasswordRouteImport } from "./app/_auth/reset-passwor
 import { Route as AuthRegisterRouteImport } from "./app/_auth/register"
 import { Route as AuthLoginRouteImport } from "./app/_auth/login"
 import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password"
-import { Route as OrganizationsSplatDashboardRouteImport } from "./app/organizations.$.dashboard"
+import { Route as OrganizationsOrgIdLayoutRouteImport } from "./app/organizations.$orgId/_layout"
+import { Route as OrganizationsOrgIdIndexRouteImport } from "./app/organizations.$orgId/index"
+import { Route as OrganizationsOrgIdTransactionsRouteImport } from "./app/organizations.$orgId/transactions"
+import { Route as OrganizationsOrgIdDashboardRouteImport } from "./app/organizations.$orgId/dashboard"
+import { Route as OrganizationsOrgIdSavingsPlansRouteImport } from "./app/organizations.$orgId/savings/plans"
 import { ServerRoute as ApiAuthSplatServerRouteImport } from "./app/api/auth.$"
 
 const rootServerRouteImport = createServerRootRoute()
 
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: "/unauthorized",
+  path: "/unauthorized",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
@@ -75,11 +85,34 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: "/forgot-password",
   getParentRoute: () => AuthLayoutRoute,
 } as any)
-const OrganizationsSplatDashboardRoute =
-  OrganizationsSplatDashboardRouteImport.update({
-    id: "/organizations/$/dashboard",
-    path: "/organizations/$/dashboard",
+const OrganizationsOrgIdLayoutRoute =
+  OrganizationsOrgIdLayoutRouteImport.update({
+    id: "/organizations/$orgId",
+    path: "/organizations/$orgId",
     getParentRoute: () => rootRouteImport,
+  } as any)
+const OrganizationsOrgIdIndexRoute = OrganizationsOrgIdIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => OrganizationsOrgIdLayoutRoute,
+} as any)
+const OrganizationsOrgIdTransactionsRoute =
+  OrganizationsOrgIdTransactionsRouteImport.update({
+    id: "/transactions",
+    path: "/transactions",
+    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
+  } as any)
+const OrganizationsOrgIdDashboardRoute =
+  OrganizationsOrgIdDashboardRouteImport.update({
+    id: "/dashboard",
+    path: "/dashboard",
+    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
+  } as any)
+const OrganizationsOrgIdSavingsPlansRoute =
+  OrganizationsOrgIdSavingsPlansRouteImport.update({
+    id: "/savings/plans",
+    path: "/savings/plans",
+    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
   } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
   id: "/api/auth/$",
@@ -90,6 +123,8 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/dashboard": typeof DashboardLayoutRouteWithChildren
+  "/unauthorized": typeof UnauthorizedRoute
+  "/organizations/$orgId": typeof OrganizationsOrgIdLayoutRouteWithChildren
   "/forgot-password": typeof AuthForgotPasswordRoute
   "/login": typeof AuthLoginRoute
   "/register": typeof AuthRegisterRoute
@@ -97,10 +132,14 @@ export interface FileRoutesByFullPath {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
-  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
+  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
+  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
+  "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
+  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
+  "/unauthorized": typeof UnauthorizedRoute
   "/forgot-password": typeof AuthForgotPasswordRoute
   "/login": typeof AuthLoginRoute
   "/register": typeof AuthRegisterRoute
@@ -108,13 +147,18 @@ export interface FileRoutesByTo {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard": typeof DashboardIndexRoute
-  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
+  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
+  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
+  "/organizations/$orgId": typeof OrganizationsOrgIdIndexRoute
+  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
   "/_auth": typeof AuthLayoutRouteWithChildren
   "/dashboard": typeof DashboardLayoutRouteWithChildren
+  "/unauthorized": typeof UnauthorizedRoute
+  "/organizations/$orgId": typeof OrganizationsOrgIdLayoutRouteWithChildren
   "/_auth/forgot-password": typeof AuthForgotPasswordRoute
   "/_auth/login": typeof AuthLoginRoute
   "/_auth/register": typeof AuthRegisterRoute
@@ -122,13 +166,18 @@ export interface FileRoutesById {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
-  "/organizations/$/dashboard": typeof OrganizationsSplatDashboardRoute
+  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
+  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
+  "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
+  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | "/"
     | "/dashboard"
+    | "/unauthorized"
+    | "/organizations/$orgId"
     | "/forgot-password"
     | "/login"
     | "/register"
@@ -136,10 +185,14 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
-    | "/organizations/$/dashboard"
+    | "/organizations/$orgId/dashboard"
+    | "/organizations/$orgId/transactions"
+    | "/organizations/$orgId/"
+    | "/organizations/$orgId/savings/plans"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
+    | "/unauthorized"
     | "/forgot-password"
     | "/login"
     | "/register"
@@ -147,12 +200,17 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard"
-    | "/organizations/$/dashboard"
+    | "/organizations/$orgId/dashboard"
+    | "/organizations/$orgId/transactions"
+    | "/organizations/$orgId"
+    | "/organizations/$orgId/savings/plans"
   id:
     | "__root__"
     | "/"
     | "/_auth"
     | "/dashboard"
+    | "/unauthorized"
+    | "/organizations/$orgId"
     | "/_auth/forgot-password"
     | "/_auth/login"
     | "/_auth/register"
@@ -160,14 +218,18 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
-    | "/organizations/$/dashboard"
+    | "/organizations/$orgId/dashboard"
+    | "/organizations/$orgId/transactions"
+    | "/organizations/$orgId/"
+    | "/organizations/$orgId/savings/plans"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
-  OrganizationsSplatDashboardRoute: typeof OrganizationsSplatDashboardRoute
+  UnauthorizedRoute: typeof UnauthorizedRoute
+  OrganizationsOrgIdLayoutRoute: typeof OrganizationsOrgIdLayoutRouteWithChildren
 }
 export interface FileServerRoutesByFullPath {
   "/api/auth/$": typeof ApiAuthSplatServerRoute
@@ -193,6 +255,13 @@ export interface RootServerRouteChildren {
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/unauthorized": {
+      id: "/unauthorized"
+      path: "/unauthorized"
+      fullPath: "/unauthorized"
+      preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/dashboard": {
       id: "/dashboard"
       path: "/dashboard"
@@ -263,12 +332,40 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
-    "/organizations/$/dashboard": {
-      id: "/organizations/$/dashboard"
-      path: "/organizations/$/dashboard"
-      fullPath: "/organizations/$/dashboard"
-      preLoaderRoute: typeof OrganizationsSplatDashboardRouteImport
+    "/organizations/$orgId": {
+      id: "/organizations/$orgId"
+      path: "/organizations/$orgId"
+      fullPath: "/organizations/$orgId"
+      preLoaderRoute: typeof OrganizationsOrgIdLayoutRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    "/organizations/$orgId/": {
+      id: "/organizations/$orgId/"
+      path: "/"
+      fullPath: "/organizations/$orgId/"
+      preLoaderRoute: typeof OrganizationsOrgIdIndexRouteImport
+      parentRoute: typeof OrganizationsOrgIdLayoutRoute
+    }
+    "/organizations/$orgId/transactions": {
+      id: "/organizations/$orgId/transactions"
+      path: "/transactions"
+      fullPath: "/organizations/$orgId/transactions"
+      preLoaderRoute: typeof OrganizationsOrgIdTransactionsRouteImport
+      parentRoute: typeof OrganizationsOrgIdLayoutRoute
+    }
+    "/organizations/$orgId/dashboard": {
+      id: "/organizations/$orgId/dashboard"
+      path: "/dashboard"
+      fullPath: "/organizations/$orgId/dashboard"
+      preLoaderRoute: typeof OrganizationsOrgIdDashboardRouteImport
+      parentRoute: typeof OrganizationsOrgIdLayoutRoute
+    }
+    "/organizations/$orgId/savings/plans": {
+      id: "/organizations/$orgId/savings/plans"
+      path: "/savings/plans"
+      fullPath: "/organizations/$orgId/savings/plans"
+      preLoaderRoute: typeof OrganizationsOrgIdSavingsPlansRouteImport
+      parentRoute: typeof OrganizationsOrgIdLayoutRoute
     }
   }
 }
@@ -318,11 +415,32 @@ const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
   DashboardLayoutRouteChildren,
 )
 
+interface OrganizationsOrgIdLayoutRouteChildren {
+  OrganizationsOrgIdDashboardRoute: typeof OrganizationsOrgIdDashboardRoute
+  OrganizationsOrgIdTransactionsRoute: typeof OrganizationsOrgIdTransactionsRoute
+  OrganizationsOrgIdIndexRoute: typeof OrganizationsOrgIdIndexRoute
+  OrganizationsOrgIdSavingsPlansRoute: typeof OrganizationsOrgIdSavingsPlansRoute
+}
+
+const OrganizationsOrgIdLayoutRouteChildren: OrganizationsOrgIdLayoutRouteChildren =
+  {
+    OrganizationsOrgIdDashboardRoute: OrganizationsOrgIdDashboardRoute,
+    OrganizationsOrgIdTransactionsRoute: OrganizationsOrgIdTransactionsRoute,
+    OrganizationsOrgIdIndexRoute: OrganizationsOrgIdIndexRoute,
+    OrganizationsOrgIdSavingsPlansRoute: OrganizationsOrgIdSavingsPlansRoute,
+  }
+
+const OrganizationsOrgIdLayoutRouteWithChildren =
+  OrganizationsOrgIdLayoutRoute._addFileChildren(
+    OrganizationsOrgIdLayoutRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
-  OrganizationsSplatDashboardRoute: OrganizationsSplatDashboardRoute,
+  UnauthorizedRoute: UnauthorizedRoute,
+  OrganizationsOrgIdLayoutRoute: OrganizationsOrgIdLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

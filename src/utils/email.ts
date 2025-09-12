@@ -1,14 +1,14 @@
 import { render } from "@react-email/render"
 import nodemailer from "nodemailer"
-import { EmailChangeVerifyEmail, type EmailChangeVerifyEmailProps } from "@/emails/EmailChangeVerifyEmail"
-import { InvitationEmail, type InvitationEmailProps } from "@/emails/InvitationEmail"
+import { EmailChangeVerifyEmail, type EmailChangeVerifyEmailProps } from "@/lib/emails/EmailChangeVerifyEmail"
+import { InvitationEmail, type InvitationEmailProps } from "@/lib/emails/InvitationEmail"
 import {
   OrganizationInvitationEmail,
   type OrganizationInvitationEmailProps
-} from "@/emails/OrganizationInvitationEmail"
-import { PasswordResetEmail, type PasswordResetEmailProps } from "@/emails/PasswordResetEmail"
-import { VerificationEmail, type VerificationEmailProps } from "@/emails/VerificationEmail"
-import { env } from "@/env/server"
+} from "@/lib/emails/OrganizationInvitationEmail"
+import { PasswordResetEmail, type PasswordResetEmailProps } from "@/lib/emails/PasswordResetEmail"
+import { VerificationEmail, type VerificationEmailProps } from "@/lib/emails/VerificationEmail"
+import { env } from "@/lib/env/server"
 
 // ----------------------------------------------- EMAIL LOG ---------------------------------
 

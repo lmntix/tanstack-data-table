@@ -1,6 +1,6 @@
 import { createInsertSchema } from "drizzle-zod"
 import z from "zod"
-import { transactionDetails, transactionHead } from "@/server/db/schema"
+import { transactionDetails, transactionHead } from "@/lib/db/schema"
 
 export const CreateTransactionSchema = createInsertSchema(transactionHead).omit({
   id: true,

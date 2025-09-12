@@ -19,8 +19,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:pull": "drizzle-kit pull",
     "db:drop-migration": "drizzle-kit drop",
-    "db:reset": "tsx src/server/db/clear.ts",
-    "db:seed": "tsx src/server/db/seed.ts",
+    "db:reset": "tsx src/lib/db/clear.ts",
+    "db:seed": "tsx src/lib/db/seed.ts",
     "prepare": "husky",
     "commit": "git add . && git-cz && git push",
     "release": "bumpp && git push --follow-tags"

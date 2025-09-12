@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useFormContext } from "@/hooks/form"
-import { Button } from "../ui/button"
 
 type Props = {
   label: string

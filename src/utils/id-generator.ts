@@ -7,7 +7,7 @@
 //   loanAccounts,
 //   creditCardAccounts,
 //   transactionAccounts
-// } from "../server/db/schema"
+// } from "../lib/db/schema"
 
 // // Define entity types
 // export const ENTITY_TYPES = {

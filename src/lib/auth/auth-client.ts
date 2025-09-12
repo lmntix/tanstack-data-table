@@ -1,7 +1,7 @@
 import { adminClient, multiSessionClient, organizationClient } from "better-auth/client/plugins"
 import { createAuthClient } from "better-auth/react"
 import { toast } from "sonner"
-import { env } from "@/env/client"
+import { env } from "@/lib/env/client"
 import { ac, admin, member, owner } from "./permissions"
 
 export const authClient = createAuthClient({

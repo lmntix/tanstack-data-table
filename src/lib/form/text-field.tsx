@@ -1,9 +1,9 @@
 import { Eye, EyeOff } from "lucide-react"
 import { JSX, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useFieldContext } from "@/hooks/form"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Label } from "../ui/label"
 
 type Props = {
   label: string | JSX.Element

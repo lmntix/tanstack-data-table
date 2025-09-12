@@ -1,6 +1,6 @@
 import { createInsertSchema } from "drizzle-zod"
 import z from "zod"
-import { savingAccounts } from "@/server/db/schema"
+import { savingAccounts } from "@/lib/db/schema"
 
 export const CreateSavingsAccountSchema = createInsertSchema(savingAccounts).omit({
   id: true,

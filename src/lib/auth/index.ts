@@ -3,21 +3,12 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { APIError, createAuthMiddleware } from "better-auth/api"
 import { admin as adminPlugin, multiSession, openAPI, organization } from "better-auth/plugins"
 import { reactStartCookies } from "better-auth/react-start"
-import { env } from "@/env/server"
-import db from "@/server/db"
-import {
-  invitations,
-  organizations,
-  orgMembers,
-  sessions,
-  userAccounts,
-  users,
-  verifications
-} from "@/server/db/schema"
-import { checkIfFirstUser } from "@/server/queries/auth/check-if-first-user"
-import { checkInvitation } from "@/server/queries/auth/check-invitation"
+import db from "@/lib/db"
+import { invitations, organizations, orgMembers, sessions, userAccounts, users, verifications } from "@/lib/db/schema"
+import { env } from "@/lib/env/server"
 import { sendEmail } from "../../utils/email"
 import { ac, admin, member, owner } from "./permissions"
+import { checkIfFirstUser, checkInvitation } from "./queries"
 
 export const auth = betterAuth({
   appName: "Finex",

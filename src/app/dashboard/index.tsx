@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getUserInvitationsFn, getUserOrganizationsFn } from "@/server/functions/organizations"
+import { getUserInvitationsFn, getUserOrganizationsFn } from "@/functions/organizations"
 
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
@@ -44,8 +44,8 @@ function OrganizationsDetails() {
             {organizations.map((org) => (
               <Link
                 className="group block"
-                to="/organizations/$/dashboard"
-                params={{ _splat: org.slug || "" }}
+                to="/organizations/$orgId/dashboard"
+                params={{ orgId: org.id }}
                 key={org.id}
               >
                 <Card className="h-full overflow-hidden transition-all duration-200 hover:shadow-md">

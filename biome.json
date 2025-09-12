@@ -14,13 +14,13 @@
       "**",
       "!src/components/ui",
       "!migrations",
-      "!src/server/db/migrations",
+      "!src/lib/db/migrations",
       "!src/routeTree.gen.ts",
       "!*.cursorrules",
       "!**/*.css",
       "!src/components/ui",
       "!migrations",
-      "!src/server/db/migrations",
+      "!src/lib/db/migrations",
       "!**/*.css"
     ]
   },
@@ -37,7 +37,7 @@
       "**/*.json",
       "!.next/**/*",
       "!**/node_modules/**/*",
-      "!src/server/db/migrations/**",
+      "!src/lib/db/migrations/**",
       "!**/public/**/*",
       "!src/components/ui/**/*"
     ],
