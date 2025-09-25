@@ -5,7 +5,7 @@ import { assertUnauthenticatedFn } from "@/functions/auth"
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,
-  beforeLoad: () => assertUnauthenticatedFn()
+  beforeLoad: async () => await assertUnauthenticatedFn()
 })
 
 function RouteComponent() {

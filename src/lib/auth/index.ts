@@ -5,8 +5,8 @@ import { admin as adminPlugin, multiSession, openAPI, organization } from "bette
 import { reactStartCookies } from "better-auth/react-start"
 import db from "@/lib/db"
 import { invitations, organizations, orgMembers, sessions, userAccounts, users, verifications } from "@/lib/db/schema"
-import { env } from "@/lib/env/server"
 import { sendEmail } from "../../utils/email"
+import { env } from "../env/client"
 import { ac, admin, member, owner } from "./permissions"
 import { checkIfFirstUser, checkInvitation } from "./queries"
 
@@ -14,7 +14,7 @@ export const auth = betterAuth({
   appName: "Finex",
   baseURL: env.VITE_APP_URL,
   logger: {
-    disabled: env.NODE_ENV === "production",
+    disabled: process.env.NODE_ENV === "production",
     level: "debug"
   },
   database: drizzleAdapter(db, {
@@ -37,8 +37,8 @@ export const auth = betterAuth({
   },
   session: {
     cookieCache: {
-      enabled: true,
-      maxAge: 1 * 60
+      enabled: false
+      // maxAge: 1 * 60
     }
   },
   emailAndPassword: {

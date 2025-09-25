@@ -1,5 +1,5 @@
 import { Body, Button, Container, Head, Html, Text } from "@react-email/components"
-import { env } from "@/lib/env/server"
+import { env } from "../env/client"
 
 export type InvitationEmailProps = {
   inviteeEmail: string

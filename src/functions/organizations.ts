@@ -1,6 +1,6 @@
 import { redirect } from "@tanstack/react-router"
 import { createServerFn } from "@tanstack/react-start"
-import { getWebRequest } from "@tanstack/react-start/server"
+import { getRequest } from "@tanstack/react-start/server"
 import { and, eq } from "drizzle-orm"
 import z from "zod"
 import { auth } from "@/lib/auth"
@@ -54,7 +54,7 @@ export const getUserInvitationsFn = createServerFn({ method: "GET" })
 
 export const getCurrentOrganizationFn = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .validator((orgId: string) => orgId)
+  .inputValidator((orgId: string) => orgId)
   .handler(async ({ context, data: orgId }) => {
     const result = await tryCatch(
       db
@@ -99,7 +99,7 @@ export const getCurrentOrganizationFn = createServerFn({ method: "GET" })
 
 export const assertIsOrgMemberFn = createServerFn()
   .middleware([authMiddleware])
-  .validator(z.object({ orgId: z.string() }))
+  .inputValidator(z.object({ orgId: z.string() }))
   .handler(async ({ data }) => {
     const { orgId } = data
 
@@ -111,7 +111,7 @@ export const assertIsOrgMemberFn = createServerFn()
       })
     }
 
-    const request = getWebRequest()
+    const request = getRequest()
 
     const result = await tryCatch(
       auth.api.setActiveOrganization({
@@ -132,3 +132,72 @@ export const assertIsOrgMemberFn = createServerFn()
 
     return result.data
   })
+
+export const ensureActiveOrgFn = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .inputValidator(z.object({ orgId: z.string() }))
+  .handler(async ({ data, context }) => {
+    const { orgId } = data
+    const { session } = context
+
+    // Check if activeOrganizationId is different from current orgId
+    if (session?.activeOrganizationId !== orgId) {
+      const request = getRequest()
+
+      const result = await tryCatch(
+        auth.api.setActiveOrganization({
+          body: { organizationId: orgId },
+          headers: request.headers
+        })
+      )
+
+      if (result.error) {
+        console.error("Error setting active organization", result.error)
+        throw redirect({
+          to: "/unauthorized",
+          search: {
+            message:
+              "Unable to access this organization. You may not have permission or the organization may not exist."
+          }
+        })
+      }
+
+      return result.data
+    }
+
+    return null
+  })
+
+export const setActiveOrgFn = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .inputValidator(z.object({ organizationId: z.string() }))
+  .handler(async ({ data }) => {
+    const { organizationId } = data
+
+    const request = getRequest()
+
+    const result = await tryCatch(
+      auth.api.setActiveOrganization({
+        body: { organizationId },
+        headers: request.headers
+      })
+    )
+
+    if (result.error) {
+      console.error("Error setting active organization", result.error)
+      throw redirect({
+        to: "/unauthorized",
+        search: {
+          message: "Unable to access this organization. You may not have permission or the organization may not exist."
+        }
+      })
+    }
+
+    return result.data
+  })
+
+// Export types directly from the function
+
+export type GetUserOrganizationsResponse = Awaited<ReturnType<typeof getUserOrganizationsFn>>
+export type GetUserInvitationsResponse = Awaited<ReturnType<typeof getUserInvitationsFn>>
+export type GetCurrentOrganizationResponse = Awaited<ReturnType<typeof getCurrentOrganizationFn>>

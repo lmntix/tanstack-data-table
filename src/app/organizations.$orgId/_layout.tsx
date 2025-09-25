@@ -1,43 +1,30 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
-import z from "zod"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { assertAuthenticatedFn } from "@/functions/auth"
-import { assertIsOrgMemberFn } from "@/functions/organizations"
-import { tryCatch } from "@/utils/try-catch"
+import { ensureActiveOrgFn } from "@/functions/organizations"
 import { AppSidebar } from "./-components/navigation/app-sidebar"
 import { OrganizationHeader } from "./-components/organization-header"
 
-const paramsSchema = z.object({
-  orgId: z.string()
-})
-
 export const Route = createFileRoute("/organizations/$orgId")({
-  params: paramsSchema,
+  ssr: "data-only",
   component: RouteComponent,
-  beforeLoad: async ({ params }) => {
-    // First check if user is authenticated
-    const authResult = await tryCatch(assertAuthenticatedFn())
+  beforeLoad: async () => {
+    const authResult = await assertAuthenticatedFn()
+    return {
+      session: authResult.session,
+      user: authResult.user
+    }
+  },
+  loader: async ({ params, context }) => {
+    const { orgId } = params
+    const { session } = context
 
-    if (authResult.error) {
-      throw redirect({
-        to: "/unauthorized",
-        search: { message: "Authentication failed." }
-      })
+    // Only set active organization if it's different from current
+    if (session?.activeOrganizationId !== orgId) {
+      return await ensureActiveOrgFn({ data: { orgId } })
     }
 
-    const { session } = authResult.data
-
-    // If user is not on their active organization, check if they're a member
-    if (session.activeOrganizationId !== params.orgId) {
-      const orgMemberResult = await tryCatch(assertIsOrgMemberFn({ data: { orgId: params.orgId } }))
-
-      if (orgMemberResult.error) {
-        throw redirect({
-          to: "/unauthorized",
-          search: { message: "You are not a member of this organization." }
-        })
-      }
-    }
+    return null
   }
 })
 

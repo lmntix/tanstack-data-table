@@ -1,10 +1,11 @@
 import { QueryClient } from "@tanstack/react-query"
-import { createRouter as createTanStackRouter } from "@tanstack/react-router"
+import { createRouter } from "@tanstack/react-router"
+import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query"
 import GlobalErrorComponent from "./components/global-error"
 import NotFoundComponent from "./components/not-found"
 import { routeTree } from "./routeTree.gen"
 
-export function createRouter() {
+export function getRouter() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -13,7 +14,7 @@ export function createRouter() {
       }
     }
   })
-  const router = createTanStackRouter({
+  const router = createRouter({
     routeTree,
     context: {
       queryClient
@@ -23,7 +24,12 @@ export function createRouter() {
     defaultNotFoundComponent: () => <NotFoundComponent />,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    defaultPendingMinMs: 0,
     defaultStructuralSharing: true
+  })
+  setupRouterSsrQueryIntegration({
+    router,
+    queryClient
   })
 
   return router
@@ -31,6 +37,6 @@ export function createRouter() {
 
 declare module "@tanstack/react-router" {
   interface Register {
-    router: ReturnType<typeof createRouter>
+    router: ReturnType<typeof getRouter>
   }
 }

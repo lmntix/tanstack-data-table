@@ -1,10 +1,10 @@
 import { redirect } from "@tanstack/react-router"
 import { createServerFn } from "@tanstack/react-start"
-import { getWebRequest } from "@tanstack/react-start/server"
+import { getRequest } from "@tanstack/react-start/server"
 import { auth } from "@/lib/auth"
 
 export const assertAuthenticatedFn = createServerFn({ method: "GET" }).handler(async () => {
-  const session = await auth.api.getSession({ headers: getWebRequest().headers })
+  const session = await auth.api.getSession({ headers: getRequest().headers })
 
   if (!session?.user) {
     throw redirect({
@@ -16,7 +16,7 @@ export const assertAuthenticatedFn = createServerFn({ method: "GET" }).handler(a
 })
 
 export const assertUnauthenticatedFn = createServerFn({ method: "GET" }).handler(async () => {
-  const session = await auth.api.getSession({ headers: getWebRequest().headers })
+  const session = await auth.api.getSession({ headers: getRequest().headers })
 
   if (session?.user) {
     throw redirect({ to: "/dashboard" })
@@ -24,14 +24,11 @@ export const assertUnauthenticatedFn = createServerFn({ method: "GET" }).handler
 })
 
 export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(async () => {
-  const session = await auth.api.getSession({ headers: getWebRequest().headers })
-  return session?.user
-})
-
-export const $getUser = createServerFn({ method: "GET" }).handler(async () => {
-  const session = await auth.api.getSession({ headers: getWebRequest().headers })
-
-  return session?.user || null
+  const session = await auth.api.getSession({ headers: getRequest().headers })
+  return {
+    user: session?.user || null,
+    session: session?.session || null
+  }
 })
 
 export const assertIsAdminFn = createServerFn({ method: "GET" }).handler(async () => {

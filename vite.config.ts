@@ -1,8 +1,11 @@
 import tailwindcss from "@tailwindcss/vite"
 import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import viteReact from "@vitejs/plugin-react"
+import { config } from "dotenv"
 import { defineConfig } from "vite"
 import tsConfigPaths from "vite-tsconfig-paths"
+
+config()
 
 export default defineConfig({
   server: {
@@ -12,16 +15,16 @@ export default defineConfig({
     tsConfigPaths({
       projects: ["./tsconfig.json"]
     }),
-    tanstackStart({
-      customViteReactPlugin: true,
 
-      tsr: {
-        quoteStyle: "double",
-        routesDirectory: "src/app",
-        routeToken: "_layout"
+    tanstackStart({
+      srcDirectory: "src",
+      router: {
+        routeToken: "_layout",
+        routesDirectory: "app",
+        quoteStyle: "double"
       }
     }),
-    viteReact(),
-    tailwindcss()
+    tailwindcss(),
+    viteReact()
   ]
 })

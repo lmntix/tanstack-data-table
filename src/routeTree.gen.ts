@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from "@tanstack/react-start/server"
-
 import { Route as rootRouteImport } from "./app/__root"
 import { Route as UnauthorizedRouteImport } from "./app/unauthorized"
 import { Route as DashboardLayoutRouteImport } from "./app/dashboard/_layout"
@@ -24,12 +22,10 @@ import { Route as AuthLoginRouteImport } from "./app/_auth/login"
 import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password"
 import { Route as OrganizationsOrgIdLayoutRouteImport } from "./app/organizations.$orgId/_layout"
 import { Route as OrganizationsOrgIdIndexRouteImport } from "./app/organizations.$orgId/index"
-import { Route as OrganizationsOrgIdTransactionsRouteImport } from "./app/organizations.$orgId/transactions"
 import { Route as OrganizationsOrgIdDashboardRouteImport } from "./app/organizations.$orgId/dashboard"
+import { Route as ApiAuthSplatRouteImport } from "./app/api/auth.$"
+import { Route as OrganizationsOrgIdTransactionsIndexRouteImport } from "./app/organizations.$orgId/transactions/index"
 import { Route as OrganizationsOrgIdSavingsPlansRouteImport } from "./app/organizations.$orgId/savings/plans"
-import { ServerRoute as ApiAuthSplatServerRouteImport } from "./app/api/auth.$"
-
-const rootServerRouteImport = createServerRootRoute()
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: "/unauthorized",
@@ -96,16 +92,21 @@ const OrganizationsOrgIdIndexRoute = OrganizationsOrgIdIndexRouteImport.update({
   path: "/",
   getParentRoute: () => OrganizationsOrgIdLayoutRoute,
 } as any)
-const OrganizationsOrgIdTransactionsRoute =
-  OrganizationsOrgIdTransactionsRouteImport.update({
-    id: "/transactions",
-    path: "/transactions",
-    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
-  } as any)
 const OrganizationsOrgIdDashboardRoute =
   OrganizationsOrgIdDashboardRouteImport.update({
     id: "/dashboard",
     path: "/dashboard",
+    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
+  } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: "/api/auth/$",
+  path: "/api/auth/$",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizationsOrgIdTransactionsIndexRoute =
+  OrganizationsOrgIdTransactionsIndexRouteImport.update({
+    id: "/transactions/",
+    path: "/transactions/",
     getParentRoute: () => OrganizationsOrgIdLayoutRoute,
   } as any)
 const OrganizationsOrgIdSavingsPlansRoute =
@@ -114,11 +115,6 @@ const OrganizationsOrgIdSavingsPlansRoute =
     path: "/savings/plans",
     getParentRoute: () => OrganizationsOrgIdLayoutRoute,
   } as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
@@ -132,10 +128,11 @@ export interface FileRoutesByFullPath {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
   "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
   "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
   "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
+  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
@@ -147,10 +144,11 @@ export interface FileRoutesByTo {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard": typeof DashboardIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
   "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
   "/organizations/$orgId": typeof OrganizationsOrgIdIndexRoute
   "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
+  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -166,10 +164,11 @@ export interface FileRoutesById {
   "/dashboard/admin": typeof DashboardAdminRoute
   "/dashboard/settings": typeof DashboardSettingsRoute
   "/dashboard/": typeof DashboardIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
   "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsRoute
   "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
   "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
+  "/organizations/$orgId/transactions/": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -185,10 +184,11 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
+    | "/api/auth/$"
     | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId/transactions"
     | "/organizations/$orgId/"
     | "/organizations/$orgId/savings/plans"
+    | "/organizations/$orgId/transactions"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
@@ -200,10 +200,11 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard"
+    | "/api/auth/$"
     | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId/transactions"
     | "/organizations/$orgId"
     | "/organizations/$orgId/savings/plans"
+    | "/organizations/$orgId/transactions"
   id:
     | "__root__"
     | "/"
@@ -218,10 +219,11 @@ export interface FileRouteTypes {
     | "/dashboard/admin"
     | "/dashboard/settings"
     | "/dashboard/"
+    | "/api/auth/$"
     | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId/transactions"
     | "/organizations/$orgId/"
     | "/organizations/$orgId/savings/plans"
+    | "/organizations/$orgId/transactions/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -230,27 +232,7 @@ export interface RootRouteChildren {
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
   UnauthorizedRoute: typeof UnauthorizedRoute
   OrganizationsOrgIdLayoutRoute: typeof OrganizationsOrgIdLayoutRouteWithChildren
-}
-export interface FileServerRoutesByFullPath {
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: "/api/auth/$"
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: "/api/auth/$"
-  id: "__root__" | "/api/auth/$"
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -346,18 +328,25 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof OrganizationsOrgIdIndexRouteImport
       parentRoute: typeof OrganizationsOrgIdLayoutRoute
     }
-    "/organizations/$orgId/transactions": {
-      id: "/organizations/$orgId/transactions"
-      path: "/transactions"
-      fullPath: "/organizations/$orgId/transactions"
-      preLoaderRoute: typeof OrganizationsOrgIdTransactionsRouteImport
-      parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
     "/organizations/$orgId/dashboard": {
       id: "/organizations/$orgId/dashboard"
       path: "/dashboard"
       fullPath: "/organizations/$orgId/dashboard"
       preLoaderRoute: typeof OrganizationsOrgIdDashboardRouteImport
+      parentRoute: typeof OrganizationsOrgIdLayoutRoute
+    }
+    "/api/auth/$": {
+      id: "/api/auth/$"
+      path: "/api/auth/$"
+      fullPath: "/api/auth/$"
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/organizations/$orgId/transactions/": {
+      id: "/organizations/$orgId/transactions/"
+      path: "/transactions"
+      fullPath: "/organizations/$orgId/transactions"
+      preLoaderRoute: typeof OrganizationsOrgIdTransactionsIndexRouteImport
       parentRoute: typeof OrganizationsOrgIdLayoutRoute
     }
     "/organizations/$orgId/savings/plans": {
@@ -366,17 +355,6 @@ declare module "@tanstack/react-router" {
       fullPath: "/organizations/$orgId/savings/plans"
       preLoaderRoute: typeof OrganizationsOrgIdSavingsPlansRouteImport
       parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
-  }
-}
-declare module "@tanstack/react-start/server" {
-  interface ServerFileRoutesByPath {
-    "/api/auth/$": {
-      id: "/api/auth/$"
-      path: "/api/auth/$"
-      fullPath: "/api/auth/$"
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
     }
   }
 }
@@ -417,17 +395,18 @@ const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
 
 interface OrganizationsOrgIdLayoutRouteChildren {
   OrganizationsOrgIdDashboardRoute: typeof OrganizationsOrgIdDashboardRoute
-  OrganizationsOrgIdTransactionsRoute: typeof OrganizationsOrgIdTransactionsRoute
   OrganizationsOrgIdIndexRoute: typeof OrganizationsOrgIdIndexRoute
   OrganizationsOrgIdSavingsPlansRoute: typeof OrganizationsOrgIdSavingsPlansRoute
+  OrganizationsOrgIdTransactionsIndexRoute: typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 
 const OrganizationsOrgIdLayoutRouteChildren: OrganizationsOrgIdLayoutRouteChildren =
   {
     OrganizationsOrgIdDashboardRoute: OrganizationsOrgIdDashboardRoute,
-    OrganizationsOrgIdTransactionsRoute: OrganizationsOrgIdTransactionsRoute,
     OrganizationsOrgIdIndexRoute: OrganizationsOrgIdIndexRoute,
     OrganizationsOrgIdSavingsPlansRoute: OrganizationsOrgIdSavingsPlansRoute,
+    OrganizationsOrgIdTransactionsIndexRoute:
+      OrganizationsOrgIdTransactionsIndexRoute,
   }
 
 const OrganizationsOrgIdLayoutRouteWithChildren =
@@ -441,13 +420,16 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   UnauthorizedRoute: UnauthorizedRoute,
   OrganizationsOrgIdLayoutRoute: OrganizationsOrgIdLayoutRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from "./router.tsx"
+import type { createStart } from "@tanstack/react-start"
+declare module "@tanstack/react-start" {
+  interface Register {
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()
