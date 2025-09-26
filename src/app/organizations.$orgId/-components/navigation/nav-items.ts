@@ -11,7 +11,7 @@ import {
   Settings,
   Users
 } from "lucide-react"
-import { Route } from "@/app/organizations.$orgId/_layout"
+import { Route } from "@/app/organizations.$orgId/layout"
 
 export interface NavItem {
   title: string

@@ -1,5 +1,5 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query"
-import { useDeferredValue, useMemo, useState } from "react"
+import { infiniteQueryOptions, useSuspenseInfiniteQuery } from "@tanstack/react-query"
+import { useMemo, useState } from "react"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table/data-table"
@@ -8,8 +8,7 @@ import type { DataTableRowAction } from "@/components/ui/data-table/data-table-t
 import { getSortingStateSchema } from "@/components/ui/data-table/parsers"
 import { type GetTransactionsResponse, getTransactionsFn } from "@/functions/transactions"
 import { useDataTable } from "@/hooks/use-data-table"
-import { useSortParams } from "@/hooks/use-sort-params"
-import { transactionFilterSchema, useTransactionFilterParams } from "@/hooks/use-transaction-filter-params"
+import { Route, transactionFilterSchema } from ".."
 import { getTransactionsTableColumns } from "./columns"
 
 type RouterOutputs = GetTransactionsResponse["data"]
@@ -23,34 +22,33 @@ interface GetTransactionsInfiniteOptionsParams extends TransactionFilterParams {
   sort?: SortingParams
 }
 
-export function getTransactionsInfiniteOptions({ q, voucherNo, sort }: GetTransactionsInfiniteOptionsParams) {
-  return {
-    queryKey: ["transactions", { filter: { q, voucherNo }, sort, q }],
-    queryFn: () =>
+export function getTransactionsInfiniteOptions({ q, voucherNo, sort, mode }: GetTransactionsInfiniteOptionsParams) {
+  return infiniteQueryOptions({
+    queryKey: ["transactions", { q, voucherNo, mode, sort }],
+    queryFn: ({ pageParam }: { pageParam?: string }) =>
       getTransactionsFn({
         data: {
           q,
           voucherNo,
+          mode,
           sort,
-          cursor: undefined
+          cursor: pageParam
         }
       }),
     initialPageParam: undefined,
     getNextPageParam: (lastPage: GetTransactionsResponse) => lastPage.meta?.cursor ?? undefined
-  }
+  })
 }
 
 export function TransactionsTable() {
-  const { filter } = useTransactionFilterParams()
-
-  const { params } = useSortParams()
-  const deferredSearch = useDeferredValue(filter.q)
+  const searchParams = Route.useSearch()
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(
     getTransactionsInfiniteOptions({
-      q: deferredSearch,
-      voucherNo: filter.voucherNo,
-      sort: params.sort
+      q: searchParams.q,
+      voucherNo: searchParams.voucherNo,
+      sort: searchParams.sort,
+      mode: searchParams.mode
     })
   )
 

@@ -5,7 +5,7 @@ import { config } from "dotenv"
 import { defineConfig } from "vite"
 import tsConfigPaths from "vite-tsconfig-paths"
 
-config()
+config({ debug: true })
 
 export default defineConfig({
   server: {
@@ -19,7 +19,7 @@ export default defineConfig({
     tanstackStart({
       srcDirectory: "src",
       router: {
-        routeToken: "_layout",
+        routeToken: "layout",
         routesDirectory: "app",
         quoteStyle: "double"
       }

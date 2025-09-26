@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start"
-import { and, asc, count, desc, eq, ilike, SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, ilike, inArray, SQL } from "drizzle-orm"
 import z from "zod"
 import { db } from "@/lib/db"
 import { financialYears, orgBranches, transactionDetails, transactionHead, users } from "@/lib/db/schema"
@@ -16,7 +16,8 @@ const getTransactionsInputSchema = z.object({
   sort: z.array(sortingItemSchema).optional().default([]),
   cursor: z.string().optional(),
   q: z.string().optional(),
-  voucherNo: z.string().optional()
+  voucherNo: z.string().optional(),
+  mode: z.array(z.enum(["OTHER", "CASH", "UPI", "CHEQUE", "BANK_TRANSFER"])).optional()
 })
 
 export const getTransactionsFn = createServerFn({ method: "GET" })
@@ -24,12 +25,13 @@ export const getTransactionsFn = createServerFn({ method: "GET" })
   .inputValidator(getTransactionsInputSchema)
 
   .handler(async ({ data, context }) => {
+    console.log("getTransactionsFn called with data:", data)
     const organizationId = context.session.activeOrganizationId
 
     if (!organizationId) {
       throw new Error("Organization not found")
     }
-    const { sort, cursor, q, voucherNo } = data
+    const { sort, cursor, q, voucherNo, mode } = data
     const pageSize = 25
     const whereConditions: (SQL | undefined)[] = [eq(transactionHead.organizationId, organizationId)]
 
@@ -42,6 +44,9 @@ export const getTransactionsFn = createServerFn({ method: "GET" })
       whereConditions.push(ilike(transactionHead.voucherNo, `%${voucherNo}%`))
     }
 
+    if (mode && mode.length > 0) {
+      whereConditions.push(inArray(transactionHead.mode, mode))
+    }
     const finalWhereConditions = whereConditions.filter((c) => c !== undefined) as SQL[]
 
     // All joins must also be limited by organizationId where relevant

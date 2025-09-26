@@ -21,10 +21,12 @@ export function DataTableToolbar<TData>({ table, children, className, ...props }
 
   const columns = React.useMemo(() => table.getAllColumns().filter((column) => column.getCanFilter()), [table])
 
-  const onReset = navigate({
-    to: ".",
-    search: {}
-  })
+  const onReset = () => {
+    navigate({
+      to: ".",
+      search: {}
+    })
+  }
 
   return (
     <div
@@ -43,7 +45,7 @@ export function DataTableToolbar<TData>({ table, children, className, ...props }
             variant="outline"
             size="sm"
             className="border-border"
-            onClick={() => onReset}
+            onClick={onReset}
           >
             <X />
             Reset

@@ -79,7 +79,7 @@ function RouteComponent() {
         </Link>
       </div>
 
-      <pre className="rounded bg-accent-background p-2 text-sm">{JSON.stringify(searchParams, null, 2)}</pre>
+      <pre className="rounded border bg-accent-background p-4 text-sm">{JSON.stringify(searchParams, null, 2)}</pre>
     </div>
   )
 }

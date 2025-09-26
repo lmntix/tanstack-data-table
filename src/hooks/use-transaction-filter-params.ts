@@ -1,10 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { z } from "zod"
-
-export const transactionFilterSchema = z.object({
-  q: z.string().optional(),
-  voucherNo: z.string().optional()
-})
+import { transactionFilterSchema } from "@/app/organizations.$orgId/transactions"
 
 type TransactionFilterParams = z.infer<typeof transactionFilterSchema>
 
