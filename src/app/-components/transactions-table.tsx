@@ -47,8 +47,7 @@ export function TransactionsTable() {
     data: data?.pages.flatMap((page) => page.data) ?? [],
     columns,
     initialState: {
-      sorting: [{ id: "transactionDate", desc: true }],
-      columnPinning: { right: ["actions"], left: ["reference"] },
+      columnPinning: { right: ["actions"], left: ["select"] },
       columnVisibility: {
         id: false,
         description: false,

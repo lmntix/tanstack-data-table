@@ -7,13 +7,9 @@ import { transactions } from "./db/schema"
 export const getTransactionsParamsSchema = z
   .object({
     cursor: z.string().optional().nullable(),
-    pageSize: z.coerce.number().min(1).max(200).default(50),
+    pageSize: z.coerce.number().min(1).max(200).default(20),
     sort: z.array(z.string()).optional().nullable(),
-
-    // Search
     search: z.string().min(1).optional().nullable(),
-
-    // Filters
     statuses: z
       .array(z.enum(["pending", "completed", "failed", "cancelled"]))
       .optional()
@@ -28,17 +24,11 @@ export const getTransactionsParamsSchema = z
       .optional()
       .nullable(),
     tags: z.array(z.string()).optional().nullable(),
-
-    // Date filters
     dateFrom: z.string().datetime().optional().nullable(),
     dateTo: z.string().datetime().optional().nullable(),
-
-    // Amount filters
     amountFrom: z.coerce.number().optional().nullable(),
     amountTo: z.coerce.number().optional().nullable(),
     amountRange: z.tuple([z.coerce.number(), z.coerce.number()]).optional().nullable(),
-
-    // Other filters
     currency: z.string().length(3).optional().nullable(),
     isRecurring: z.coerce.boolean().optional().nullable(),
     counterparty: z.string().min(1).optional().nullable(),
@@ -52,7 +42,7 @@ export const getTransactions = createServerFn({ method: "GET" })
   .handler(async ({ data: params }) => {
     const {
       cursor,
-      pageSize = 50,
+      pageSize = 20,
       sort,
       search,
       statuses,
