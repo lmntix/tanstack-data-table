@@ -1,8 +1,6 @@
 ## Getting Started
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
-Open [http://localhost:8025](http://localhost:8025) to see the mail server.
-Open [http://localhost:3000/api/auth/reference](http://localhost:3000/api/auth/reference) to see the Auth Open API Scalar
 
 ## Developer Commands
 

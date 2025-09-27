@@ -8,7 +8,6 @@ import GlobalErrorComponent from "@/components/global-error"
 import NotFoundComponent from "@/components/not-found"
 import Providers from "@/components/providers"
 import appCss from "@/styles.css?url"
-import { seo } from "@/utils/seo"
 import "nprogress/nprogress.css"
 
 export const Route = createRootRouteWithContext<{
@@ -22,11 +21,7 @@ export const Route = createRootRouteWithContext<{
       {
         name: "viewport",
         content: "width=device-width, initial-scale=1"
-      },
-      ...seo({
-        title: "Finex | Modern Microfinance Management Platform",
-        description: "Finex is a comprehensive microfinance management platform with modern technology."
-      })
+      }
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -33,8 +33,11 @@ export function useTransactionFilterParams() {
     })
   }
 
+  const hasFilters = Object.values(filter).some((value) => value !== null && value !== undefined)
+
   return {
     filter,
+    hasFilters,
     setParams,
     clearParams
   }

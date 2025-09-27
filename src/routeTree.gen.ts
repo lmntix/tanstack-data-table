@@ -9,255 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./app/__root"
-import { Route as UnauthorizedRouteImport } from "./app/unauthorized"
-import { Route as DashboardLayoutRouteImport } from "./app/dashboard/layout"
-import { Route as AuthLayoutRouteImport } from "./app/_auth/layout"
 import { Route as IndexRouteImport } from "./app/index"
-import { Route as DashboardIndexRouteImport } from "./app/dashboard/index"
-import { Route as DashboardSettingsRouteImport } from "./app/dashboard/settings"
-import { Route as DashboardAdminRouteImport } from "./app/dashboard/admin"
-import { Route as AuthResetPasswordRouteImport } from "./app/_auth/reset-password"
-import { Route as AuthRegisterRouteImport } from "./app/_auth/register"
-import { Route as AuthLoginRouteImport } from "./app/_auth/login"
-import { Route as AuthForgotPasswordRouteImport } from "./app/_auth/forgot-password"
-import { Route as OrganizationsOrgIdLayoutRouteImport } from "./app/organizations.$orgId/layout"
-import { Route as OrganizationsOrgIdIndexRouteImport } from "./app/organizations.$orgId/index"
-import { Route as OrganizationsOrgIdDashboardRouteImport } from "./app/organizations.$orgId/dashboard"
-import { Route as ApiAuthSplatRouteImport } from "./app/api/auth.$"
-import { Route as OrganizationsOrgIdTransactionsIndexRouteImport } from "./app/organizations.$orgId/transactions/index"
-import { Route as OrganizationsOrgIdSavingsPlansRouteImport } from "./app/organizations.$orgId/savings/plans"
 
-const UnauthorizedRoute = UnauthorizedRouteImport.update({
-  id: "/unauthorized",
-  path: "/unauthorized",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
-  id: "/dashboard",
-  path: "/dashboard",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthLayoutRoute = AuthLayoutRouteImport.update({
-  id: "/_auth",
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => DashboardLayoutRoute,
-} as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
-  getParentRoute: () => DashboardLayoutRoute,
-} as any)
-const DashboardAdminRoute = DashboardAdminRouteImport.update({
-  id: "/admin",
-  path: "/admin",
-  getParentRoute: () => DashboardLayoutRoute,
-} as any)
-const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  id: "/reset-password",
-  path: "/reset-password",
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: "/register",
-  path: "/register",
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: "/login",
-  path: "/login",
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: "/forgot-password",
-  path: "/forgot-password",
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const OrganizationsOrgIdLayoutRoute =
-  OrganizationsOrgIdLayoutRouteImport.update({
-    id: "/organizations/$orgId",
-    path: "/organizations/$orgId",
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const OrganizationsOrgIdIndexRoute = OrganizationsOrgIdIndexRouteImport.update({
-  id: "/",
-  path: "/",
-  getParentRoute: () => OrganizationsOrgIdLayoutRoute,
-} as any)
-const OrganizationsOrgIdDashboardRoute =
-  OrganizationsOrgIdDashboardRouteImport.update({
-    id: "/dashboard",
-    path: "/dashboard",
-    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
-  } as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: "/api/auth/$",
-  path: "/api/auth/$",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrganizationsOrgIdTransactionsIndexRoute =
-  OrganizationsOrgIdTransactionsIndexRouteImport.update({
-    id: "/transactions/",
-    path: "/transactions/",
-    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
-  } as any)
-const OrganizationsOrgIdSavingsPlansRoute =
-  OrganizationsOrgIdSavingsPlansRouteImport.update({
-    id: "/savings/plans",
-    path: "/savings/plans",
-    getParentRoute: () => OrganizationsOrgIdLayoutRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
-  "/dashboard": typeof DashboardLayoutRouteWithChildren
-  "/unauthorized": typeof UnauthorizedRoute
-  "/organizations/$orgId": typeof OrganizationsOrgIdLayoutRouteWithChildren
-  "/forgot-password": typeof AuthForgotPasswordRoute
-  "/login": typeof AuthLoginRoute
-  "/register": typeof AuthRegisterRoute
-  "/reset-password": typeof AuthResetPasswordRoute
-  "/dashboard/admin": typeof DashboardAdminRoute
-  "/dashboard/settings": typeof DashboardSettingsRoute
-  "/dashboard/": typeof DashboardIndexRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
-  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
-  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
-  "/unauthorized": typeof UnauthorizedRoute
-  "/forgot-password": typeof AuthForgotPasswordRoute
-  "/login": typeof AuthLoginRoute
-  "/register": typeof AuthRegisterRoute
-  "/reset-password": typeof AuthResetPasswordRoute
-  "/dashboard/admin": typeof DashboardAdminRoute
-  "/dashboard/settings": typeof DashboardSettingsRoute
-  "/dashboard": typeof DashboardIndexRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId": typeof OrganizationsOrgIdIndexRoute
-  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
-  "/organizations/$orgId/transactions": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
-  "/_auth": typeof AuthLayoutRouteWithChildren
-  "/dashboard": typeof DashboardLayoutRouteWithChildren
-  "/unauthorized": typeof UnauthorizedRoute
-  "/organizations/$orgId": typeof OrganizationsOrgIdLayoutRouteWithChildren
-  "/_auth/forgot-password": typeof AuthForgotPasswordRoute
-  "/_auth/login": typeof AuthLoginRoute
-  "/_auth/register": typeof AuthRegisterRoute
-  "/_auth/reset-password": typeof AuthResetPasswordRoute
-  "/dashboard/admin": typeof DashboardAdminRoute
-  "/dashboard/settings": typeof DashboardSettingsRoute
-  "/dashboard/": typeof DashboardIndexRoute
-  "/api/auth/$": typeof ApiAuthSplatRoute
-  "/organizations/$orgId/dashboard": typeof OrganizationsOrgIdDashboardRoute
-  "/organizations/$orgId/": typeof OrganizationsOrgIdIndexRoute
-  "/organizations/$orgId/savings/plans": typeof OrganizationsOrgIdSavingsPlansRoute
-  "/organizations/$orgId/transactions/": typeof OrganizationsOrgIdTransactionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | "/"
-    | "/dashboard"
-    | "/unauthorized"
-    | "/organizations/$orgId"
-    | "/forgot-password"
-    | "/login"
-    | "/register"
-    | "/reset-password"
-    | "/dashboard/admin"
-    | "/dashboard/settings"
-    | "/dashboard/"
-    | "/api/auth/$"
-    | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId/"
-    | "/organizations/$orgId/savings/plans"
-    | "/organizations/$orgId/transactions"
+  fullPaths: "/"
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | "/"
-    | "/unauthorized"
-    | "/forgot-password"
-    | "/login"
-    | "/register"
-    | "/reset-password"
-    | "/dashboard/admin"
-    | "/dashboard/settings"
-    | "/dashboard"
-    | "/api/auth/$"
-    | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId"
-    | "/organizations/$orgId/savings/plans"
-    | "/organizations/$orgId/transactions"
-  id:
-    | "__root__"
-    | "/"
-    | "/_auth"
-    | "/dashboard"
-    | "/unauthorized"
-    | "/organizations/$orgId"
-    | "/_auth/forgot-password"
-    | "/_auth/login"
-    | "/_auth/register"
-    | "/_auth/reset-password"
-    | "/dashboard/admin"
-    | "/dashboard/settings"
-    | "/dashboard/"
-    | "/api/auth/$"
-    | "/organizations/$orgId/dashboard"
-    | "/organizations/$orgId/"
-    | "/organizations/$orgId/savings/plans"
-    | "/organizations/$orgId/transactions/"
+  to: "/"
+  id: "__root__" | "/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
-  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
-  UnauthorizedRoute: typeof UnauthorizedRoute
-  OrganizationsOrgIdLayoutRoute: typeof OrganizationsOrgIdLayoutRouteWithChildren
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/unauthorized": {
-      id: "/unauthorized"
-      path: "/unauthorized"
-      fullPath: "/unauthorized"
-      preLoaderRoute: typeof UnauthorizedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/dashboard": {
-      id: "/dashboard"
-      path: "/dashboard"
-      fullPath: "/dashboard"
-      preLoaderRoute: typeof DashboardLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/_auth": {
-      id: "/_auth"
-      path: ""
-      fullPath: ""
-      preLoaderRoute: typeof AuthLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     "/": {
       id: "/"
       path: "/"
@@ -265,162 +48,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/dashboard/": {
-      id: "/dashboard/"
-      path: "/"
-      fullPath: "/dashboard/"
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardLayoutRoute
-    }
-    "/dashboard/settings": {
-      id: "/dashboard/settings"
-      path: "/settings"
-      fullPath: "/dashboard/settings"
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardLayoutRoute
-    }
-    "/dashboard/admin": {
-      id: "/dashboard/admin"
-      path: "/admin"
-      fullPath: "/dashboard/admin"
-      preLoaderRoute: typeof DashboardAdminRouteImport
-      parentRoute: typeof DashboardLayoutRoute
-    }
-    "/_auth/reset-password": {
-      id: "/_auth/reset-password"
-      path: "/reset-password"
-      fullPath: "/reset-password"
-      preLoaderRoute: typeof AuthResetPasswordRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    "/_auth/register": {
-      id: "/_auth/register"
-      path: "/register"
-      fullPath: "/register"
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    "/_auth/login": {
-      id: "/_auth/login"
-      path: "/login"
-      fullPath: "/login"
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    "/_auth/forgot-password": {
-      id: "/_auth/forgot-password"
-      path: "/forgot-password"
-      fullPath: "/forgot-password"
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof AuthLayoutRoute
-    }
-    "/organizations/$orgId": {
-      id: "/organizations/$orgId"
-      path: "/organizations/$orgId"
-      fullPath: "/organizations/$orgId"
-      preLoaderRoute: typeof OrganizationsOrgIdLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/organizations/$orgId/": {
-      id: "/organizations/$orgId/"
-      path: "/"
-      fullPath: "/organizations/$orgId/"
-      preLoaderRoute: typeof OrganizationsOrgIdIndexRouteImport
-      parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
-    "/organizations/$orgId/dashboard": {
-      id: "/organizations/$orgId/dashboard"
-      path: "/dashboard"
-      fullPath: "/organizations/$orgId/dashboard"
-      preLoaderRoute: typeof OrganizationsOrgIdDashboardRouteImport
-      parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
-    "/api/auth/$": {
-      id: "/api/auth/$"
-      path: "/api/auth/$"
-      fullPath: "/api/auth/$"
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/organizations/$orgId/transactions/": {
-      id: "/organizations/$orgId/transactions/"
-      path: "/transactions"
-      fullPath: "/organizations/$orgId/transactions"
-      preLoaderRoute: typeof OrganizationsOrgIdTransactionsIndexRouteImport
-      parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
-    "/organizations/$orgId/savings/plans": {
-      id: "/organizations/$orgId/savings/plans"
-      path: "/savings/plans"
-      fullPath: "/organizations/$orgId/savings/plans"
-      preLoaderRoute: typeof OrganizationsOrgIdSavingsPlansRouteImport
-      parentRoute: typeof OrganizationsOrgIdLayoutRoute
-    }
   }
 }
-
-interface AuthLayoutRouteChildren {
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-}
-
-const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-  AuthResetPasswordRoute: AuthResetPasswordRoute,
-}
-
-const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
-  AuthLayoutRouteChildren,
-)
-
-interface DashboardLayoutRouteChildren {
-  DashboardAdminRoute: typeof DashboardAdminRoute
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
-}
-
-const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
-  DashboardAdminRoute: DashboardAdminRoute,
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
-}
-
-const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
-  DashboardLayoutRouteChildren,
-)
-
-interface OrganizationsOrgIdLayoutRouteChildren {
-  OrganizationsOrgIdDashboardRoute: typeof OrganizationsOrgIdDashboardRoute
-  OrganizationsOrgIdIndexRoute: typeof OrganizationsOrgIdIndexRoute
-  OrganizationsOrgIdSavingsPlansRoute: typeof OrganizationsOrgIdSavingsPlansRoute
-  OrganizationsOrgIdTransactionsIndexRoute: typeof OrganizationsOrgIdTransactionsIndexRoute
-}
-
-const OrganizationsOrgIdLayoutRouteChildren: OrganizationsOrgIdLayoutRouteChildren =
-  {
-    OrganizationsOrgIdDashboardRoute: OrganizationsOrgIdDashboardRoute,
-    OrganizationsOrgIdIndexRoute: OrganizationsOrgIdIndexRoute,
-    OrganizationsOrgIdSavingsPlansRoute: OrganizationsOrgIdSavingsPlansRoute,
-    OrganizationsOrgIdTransactionsIndexRoute:
-      OrganizationsOrgIdTransactionsIndexRoute,
-  }
-
-const OrganizationsOrgIdLayoutRouteWithChildren =
-  OrganizationsOrgIdLayoutRoute._addFileChildren(
-    OrganizationsOrgIdLayoutRouteChildren,
-  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthLayoutRoute: AuthLayoutRouteWithChildren,
-  DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
-  UnauthorizedRoute: UnauthorizedRoute,
-  OrganizationsOrgIdLayoutRoute: OrganizationsOrgIdLayoutRouteWithChildren,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

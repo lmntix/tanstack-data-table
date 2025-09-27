@@ -5,50 +5,37 @@ import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/ui/data-table/data-table"
 import { DataTableToolbar } from "@/components/ui/data-table/data-table-toolbar"
 import type { DataTableRowAction } from "@/components/ui/data-table/data-table-types"
-import { getSortingStateSchema } from "@/components/ui/data-table/parsers"
-import { type GetTransactionsResponse, getTransactionsFn } from "@/functions/transactions"
 import { useDataTable } from "@/hooks/use-data-table"
-import { Route, transactionFilterSchema } from ".."
+import { GetTransactionsResponse, getTransactions, getTransactionsParamsSchema } from "@/lib/functions"
+
+import { Route } from ".."
 import { getTransactionsTableColumns } from "./columns"
 
-type RouterOutputs = GetTransactionsResponse["data"]
-type Transaction = RouterOutputs[number]
+type Transaction = GetTransactionsResponse["data"][number]
+type TransactionFilterParams = z.infer<typeof getTransactionsParamsSchema>
 
-// Use the proper Zod types
-type TransactionFilterParams = z.infer<typeof transactionFilterSchema>
-type SortingParams = z.infer<ReturnType<typeof getSortingStateSchema>>
-
-interface GetTransactionsInfiniteOptionsParams extends TransactionFilterParams {
-  sort?: SortingParams
-}
-
-export function getTransactionsInfiniteOptions({ q, voucherNo, sort, mode }: GetTransactionsInfiniteOptionsParams) {
+export function getTransactionsInfiniteOptions(filters: Partial<TransactionFilterParams>) {
   return infiniteQueryOptions({
-    queryKey: ["transactions", { q, voucherNo, mode, sort }],
-    queryFn: ({ pageParam }: { pageParam?: string }) =>
-      getTransactionsFn({
-        data: {
-          q,
-          voucherNo,
-          mode,
-          sort,
-          cursor: pageParam
-        }
-      }),
+    queryKey: ["transactions", filters],
+    queryFn: () => getTransactions({ data: filters }),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage: GetTransactionsResponse) => lastPage.meta?.cursor ?? undefined
+    getNextPageParam: (lastPage: GetTransactionsResponse) => lastPage.meta.cursor ?? undefined
   })
 }
 
 export function TransactionsTable() {
   const searchParams = Route.useSearch()
 
+  // Convert sort format from table to API format
+  const sortParam =
+    searchParams.sort && searchParams.sort.length > 0
+      ? [searchParams.sort[0].id, searchParams.sort[0].desc ? "desc" : "asc"]
+      : null
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(
     getTransactionsInfiniteOptions({
-      q: searchParams.q,
-      voucherNo: searchParams.voucherNo,
-      sort: searchParams.sort,
-      mode: searchParams.mode
+      ...searchParams,
+      sort: sortParam
     })
   )
 
@@ -59,14 +46,17 @@ export function TransactionsTable() {
     data: data?.pages.flatMap((page) => page.data) ?? [],
     columns,
     initialState: {
-      sorting: [{ id: "createdAt", desc: true }],
-      columnPinning: { right: ["actions"], left: ["narration"] },
+      sorting: [{ id: "transactionDate", desc: true }],
+      columnPinning: { right: ["actions"], left: ["reference"] },
       columnVisibility: {
         id: false,
-        financialYearId: false,
-        branchId: false,
+        description: false,
         createdAt: false,
-        voucherNo: false
+        updatedAt: false,
+        metadata: false,
+        tags: false,
+        notes: false,
+        isInternal: false
       }
     },
     getRowId: (originalRow) => originalRow.id.toString(),
