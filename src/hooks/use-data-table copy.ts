@@ -1,6 +1,3 @@
-// hooks/use-data-table.ts
-
-import type { UseInfiniteQueryResult } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import {
   type ColumnFiltersState,
@@ -19,7 +16,6 @@ import {
   useReactTable,
   type VisibilityState
 } from "@tanstack/react-table"
-import { useVirtualizer } from "@tanstack/react-virtual"
 import * as React from "react"
 import { useDebounceCallback } from "usehooks-ts"
 import type { ExtendedColumnSort } from "@/components/ui/data-table/data-table-types"
@@ -39,30 +35,13 @@ interface UseDataTableProps<TData>
   clearOnDefault?: boolean
   shallow?: boolean
   onRowClick?: (row: TData) => void
-  infiniteQuery: UseInfiniteQueryResult<any, Error>
-  estimateSize?: number
-  overscan?: number
-  containerHeight?: string | number
 }
 
 export function useDataTable<TData>(props: UseDataTableProps<TData>) {
-  const {
-    columns,
-    initialState,
-    debounceMs = DEBOUNCE_MS,
-    shallow = true,
-    onRowClick,
-    infiniteQuery,
-    estimateSize = 60,
-    overscan = 10,
-    containerHeight = "600px",
-    ...tableProps
-  } = props
+  const { columns, initialState, debounceMs = DEBOUNCE_MS, shallow = true, onRowClick, ...tableProps } = props
 
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-
-  const tableContainerRef = React.useRef<HTMLDivElement>(null)
 
   // Column visibility state
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(initialState?.columnVisibility ?? {})
@@ -129,26 +108,6 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     [debouncedSetColumnFilters]
   )
 
-  // Auto-fetch more data when scrolling near bottom
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
-        const { fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = infiniteQuery
-
-        if (scrollHeight - scrollTop - clientHeight < 300 && !isFetching && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage()
-        }
-      }
-    },
-    [infiniteQuery]
-  )
-
-  // Check for auto-fetch on mount and after fetch
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current)
-  }, [fetchMoreOnBottomReached])
-
   const table = useReactTable({
     ...tableProps,
     columns,
@@ -180,29 +139,5 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     manualFiltering: true
   })
 
-  const { rows } = table.getRowModel()
-
-  // Virtualizer
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => estimateSize,
-    overscan
-  })
-
-  return {
-    table,
-    shallow,
-    debounceMs,
-    onRowClick,
-    containerRef: tableContainerRef,
-    containerHeight,
-    virtualItems: rowVirtualizer.getVirtualItems(),
-    totalSize: rowVirtualizer.getTotalSize(),
-    fetchMoreOnBottomReached,
-    hasNextPage: infiniteQuery.hasNextPage,
-    isFetchingNextPage: infiniteQuery.isFetchingNextPage,
-    isFetching: infiniteQuery.isFetching,
-    scrollToIndex: rowVirtualizer.scrollToIndex
-  }
+  return { table, shallow, debounceMs, onRowClick }
 }

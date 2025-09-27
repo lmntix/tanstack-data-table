@@ -62,7 +62,8 @@ export function getTransactionsTableColumns({
         )
       },
       enableSorting: false,
-      enableHiding: true
+      enableHiding: true,
+      minSize: 140
     },
     {
       id: "reference",
@@ -75,7 +76,8 @@ export function getTransactionsTableColumns({
         ) : (
           <span className="text-muted-foreground">-</span>
         )
-      }
+      },
+      minSize: 340
     },
     {
       id: "name",
