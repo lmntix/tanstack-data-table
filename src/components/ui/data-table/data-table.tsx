@@ -41,9 +41,9 @@ export function DataTable<TData>({
         onScroll={handleScroll}
       >
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-muted/80 backdrop-blur-sm border-b" style={{ minWidth: "fit-content" }}>
+        <div className="sticky top-0 z-10 bg-background backdrop-blur-sm border-b w-full">
           {headerGroups.map((headerGroup) => (
-            <div key={headerGroup.id} className="flex">
+            <div key={headerGroup.id} className="flex w-full">
               {headerGroup.headers.map((header) => {
                 const isPinned = header.column.getIsPinned()
                 const isLeft = isPinned === "left"
@@ -54,14 +54,13 @@ export function DataTable<TData>({
                     key={header.id}
                     className={cn(
                       "flex items-center h-12 px-4 text-left align-middle font-medium text-muted-foreground border-r",
-                      "[&:has([role=checkbox])]:pr-0",
-                      isLeft && "sticky left-0 z-20 bg-muted/80 backdrop-blur-sm",
-                      isRight && "sticky right-0 z-20 bg-muted/80 backdrop-blur-sm"
+                      isLeft && "sticky left-0 z-20 bg-background backdrop-blur-sm",
+                      isRight && "sticky right-0 z-20 bg-background backdrop-blur-sm"
                     )}
                     style={{
-                      width: header.getSize(),
-                      minWidth: header.column.columnDef.minSize || header.getSize(),
-                      maxWidth: header.column.columnDef.maxSize || "none",
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      flex: "1 0 auto",
                       ...(isLeft && {
                         left: `${header.column.getStart("left")}px`,
                         boxShadow: "2px 0 4px -2px rgba(0,0,0,0.1)"
@@ -85,7 +84,7 @@ export function DataTable<TData>({
           style={{
             height: `${totalSize}px`,
             position: "relative",
-            minWidth: "fit-content"
+            width: "100%"
           }}
         >
           {virtualItems.map((virtualRow) => {
@@ -96,14 +95,13 @@ export function DataTable<TData>({
               <div
                 key={row.id}
                 className={cn(
-                  "flex border-b transition-colors hover:bg-muted/50",
+                  "flex border-b transition-colors hover:bg-muted/50 w-full",
                   row.getIsSelected() && "bg-muted",
                   onRowClick && "cursor-pointer"
                 )}
                 style={{
                   position: "absolute",
                   transform: `translateY(${virtualRow.start}px)`,
-                  width: "100%",
                   height: `${virtualRow.size}px`
                 }}
                 onClick={onRowClick ? () => onRowClick(row.original) : undefined}
@@ -123,9 +121,9 @@ export function DataTable<TData>({
                         isRight && "sticky right-0 z-10 bg-background"
                       )}
                       style={{
-                        width: cell.column.getSize(),
-                        minWidth: cell.column.columnDef.minSize || cell.column.getSize(),
-                        maxWidth: cell.column.columnDef.maxSize || "none",
+                        width: `${cell.column.getSize()}px`,
+                        minWidth: `${cell.column.getSize()}px`,
+                        flex: "1 0 auto",
                         ...(isLeft && {
                           left: `${cell.column.getStart("left")}px`,
                           boxShadow: "2px 0 4px -2px rgba(0,0,0,0.1)"

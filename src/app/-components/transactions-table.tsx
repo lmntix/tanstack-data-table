@@ -9,7 +9,7 @@ import type { DataTableRowAction } from "@/components/ui/data-table/data-table-t
 import { useDataTable } from "@/hooks/use-data-table"
 import { GetTransactionsResponse, getTransactions, getTransactionsParamsSchema } from "@/lib/functions"
 import { Route } from ".."
-import { transactionsColumns } from "./columns"
+import { columns } from "./columns"
 import { TransactionsFilter } from "./transactions-filter"
 
 type Transaction = GetTransactionsResponse["data"][number]
@@ -32,7 +32,7 @@ export function getTransactionsInfiniteOptions(filters: Partial<TransactionFilte
 
 export function TransactionsTable() {
   const searchParams = Route.useSearch()
-  const [rowAction, setRowAction] = useState<DataTableRowAction<Transaction> | null>(null)
+  const [rowAction, _setRowAction] = useState<DataTableRowAction<Transaction> | null>(null)
 
   const sortParam =
     searchParams.sort && searchParams.sort.length > 0
@@ -51,7 +51,8 @@ export function TransactionsTable() {
 
   const dataTable = useDataTable({
     data,
-    columns: transactionsColumns,
+    columns,
+    containerHeight: "calc(100vh - 250px)",
     initialState: {
       columnPinning: { right: ["actions"], left: ["select"] },
       columnVisibility: {

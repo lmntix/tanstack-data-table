@@ -18,7 +18,7 @@ import { formatDate } from "@/utils/format"
 
 type Transaction = GetTransactionsResponse["data"][number]
 
-export const transactionsColumns: ColumnDef<Transaction>[] = [
+export const columns: ColumnDef<Transaction>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -39,8 +39,7 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 40,
-    minSize: 40
+    size: 40
   },
   {
     id: "id",
@@ -53,7 +52,7 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     ),
     enableSorting: false,
     enableHiding: true,
-    size: 80
+    size: 180
   },
   {
     id: "reference",
@@ -61,9 +60,9 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Reference" />,
     cell: ({ row }) => {
       const reference = row.getValue("reference") as string | null
-      return reference ? <div className="truncate">{reference}</div> : <span className="text-muted-foreground">—</span>
+      return reference ? <div>{reference}</div> : <span className="text-muted-foreground">—</span>
     },
-    size: 120
+    size: 220
   },
   {
     id: "name",
@@ -71,7 +70,7 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     cell: ({ row }) => {
       const name = row.getValue("name") as string
-      return <div className="truncate font-medium">{name}</div>
+      return <div className="font-mono text-xs">{name}</div>
     },
     size: 200
   },
@@ -96,7 +95,7 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
         currency: "INR",
         minimumFractionDigits: 2
       }).format(amount)
-      return <div className="truncate font-mono">{formatted}</div>
+      return <div className="truncate font-mono text-sm">{formatted}</div>
     },
     size: 130
   },
@@ -180,6 +179,6 @@ export const transactionsColumns: ColumnDef<Transaction>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 40
+    size: 60
   }
 ]
