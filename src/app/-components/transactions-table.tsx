@@ -1,6 +1,6 @@
 // transactions-table.tsx
 import { infiniteQueryOptions, useSuspenseInfiniteQuery } from "@tanstack/react-query"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { z } from "zod"
 
 import { DataTable } from "@/components/ui/data-table/data-table"
@@ -9,7 +9,7 @@ import type { DataTableRowAction } from "@/components/ui/data-table/data-table-t
 import { useDataTable } from "@/hooks/use-data-table"
 import { GetTransactionsResponse, getTransactions, getTransactionsParamsSchema } from "@/lib/functions"
 import { Route } from ".."
-import { getTransactionsTableColumns } from "./columns"
+import { transactionsColumns } from "./columns"
 import { TransactionsFilter } from "./transactions-filter"
 
 type Transaction = GetTransactionsResponse["data"][number]
@@ -46,14 +46,12 @@ export function TransactionsTable() {
     })
   )
 
-  const flatData = useMemo(() => infiniteQuery.data?.pages?.flatMap((page) => page.data) ?? [], [infiniteQuery.data])
-
-  const columns = useMemo(() => getTransactionsTableColumns({ setRowAction }), [setRowAction])
+  // Simple data reference - no complex logic
+  const data = infiniteQuery.data?.pages?.flatMap((page) => page.data) ?? []
 
   const dataTable = useDataTable({
-    data: flatData,
-    columns,
-    infiniteQuery,
+    data,
+    columns: transactionsColumns,
     initialState: {
       columnPinning: { right: ["actions"], left: ["select"] },
       columnVisibility: {
@@ -77,7 +75,24 @@ export function TransactionsTable() {
         <TransactionsFilter />
       </DataTableToolbar>
 
-      <DataTable dataTable={dataTable} />
+      <DataTable
+        dataTable={dataTable}
+        onFetchMore={infiniteQuery.fetchNextPage}
+        hasNextPage={infiniteQuery.hasNextPage}
+        isFetchingNextPage={infiniteQuery.isFetchingNextPage}
+      />
+
+      <div className="flex items-center justify-between px-2">
+        <div className="flex-1 text-muted-foreground text-sm">
+          {dataTable.table.getFilteredSelectedRowModel().rows.length} of {data.length} row(s) selected.
+        </div>
+        <div className="text-muted-foreground text-sm">
+          Loaded {data.length} transactions
+          {infiniteQuery.hasNextPage && " (more available)"}
+        </div>
+      </div>
+
+      {rowAction && <div>{/* Your existing row action modal/drawer components */}</div>}
     </div>
   )
 }

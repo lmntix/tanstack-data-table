@@ -1,6 +1,4 @@
 // hooks/use-data-table.ts
-
-import type { UseInfiniteQueryResult } from "@tanstack/react-query"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import {
   type ColumnFiltersState,
@@ -39,7 +37,6 @@ interface UseDataTableProps<TData>
   clearOnDefault?: boolean
   shallow?: boolean
   onRowClick?: (row: TData) => void
-  infiniteQuery: UseInfiniteQueryResult<any, Error>
   estimateSize?: number
   overscan?: number
   containerHeight?: string | number
@@ -52,7 +49,6 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     debounceMs = DEBOUNCE_MS,
     shallow = true,
     onRowClick,
-    infiniteQuery,
     estimateSize = 60,
     overscan = 10,
     containerHeight = "600px",
@@ -61,7 +57,6 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
 
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-
   const tableContainerRef = React.useRef<HTMLDivElement>(null)
 
   // Column visibility state
@@ -129,26 +124,6 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     [debouncedSetColumnFilters]
   )
 
-  // Auto-fetch more data when scrolling near bottom
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
-        const { fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } = infiniteQuery
-
-        if (scrollHeight - scrollTop - clientHeight < 300 && !isFetching && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage()
-        }
-      }
-    },
-    [infiniteQuery]
-  )
-
-  // Check for auto-fetch on mount and after fetch
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current)
-  }, [fetchMoreOnBottomReached])
-
   const table = useReactTable({
     ...tableProps,
     columns,
@@ -199,10 +174,6 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     containerHeight,
     virtualItems: rowVirtualizer.getVirtualItems(),
     totalSize: rowVirtualizer.getTotalSize(),
-    fetchMoreOnBottomReached,
-    hasNextPage: infiniteQuery.hasNextPage,
-    isFetchingNextPage: infiniteQuery.isFetchingNextPage,
-    isFetching: infiniteQuery.isFetching,
     scrollToIndex: rowVirtualizer.scrollToIndex
   }
 }
