@@ -10,6 +10,7 @@ import { GetTransactionsResponse, getTransactions, getTransactionsParamsSchema }
 
 import { Route } from ".."
 import { getTransactionsTableColumns } from "./columns"
+import { TransactionsFilter } from "./transactions-filter"
 
 type Transaction = GetTransactionsResponse["data"][number]
 type TransactionFilterParams = z.infer<typeof getTransactionsParamsSchema>
@@ -67,7 +68,9 @@ export function TransactionsTable() {
   return (
     <>
       <DataTable table={table} onRowClick={onRowClick}>
-        <DataTableToolbar table={table} />
+        <DataTableToolbar table={table}>
+          <TransactionsFilter />
+        </DataTableToolbar>
       </DataTable>
       {hasNextPage && (
         <div className="flex justify-center p-4">

@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import { Calendar, CreditCard, DollarSign, Ellipsis, FileText, RefreshCw, Tag, User } from "lucide-react"
+import { Ellipsis } from "lucide-react"
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
@@ -51,14 +51,7 @@ export function getTransactionsTableColumns({
         ) : (
           <span className="text-muted-foreground">-</span>
         )
-      },
-      meta: {
-        label: "Reference",
-        placeholder: "Search references",
-        variant: "text",
-        icon: FileText
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "name",
@@ -67,14 +60,7 @@ export function getTransactionsTableColumns({
       cell: ({ row }) => {
         const name = row.getValue("name") as string
         return <div className="max-w-[31.25rem] truncate font-medium">{name}</div>
-      },
-      meta: {
-        label: "Name",
-        placeholder: "Search names",
-        variant: "text",
-        icon: FileText
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "description",
@@ -83,14 +69,7 @@ export function getTransactionsTableColumns({
       cell: ({ row }) => {
         const description = row.getValue("description") as string | null
         return <div className="max-w-[31.25rem] truncate">{description || "No description"}</div>
-      },
-      meta: {
-        label: "Description",
-        placeholder: "Search descriptions",
-        variant: "text",
-        icon: FileText
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "amount",
@@ -105,13 +84,7 @@ export function getTransactionsTableColumns({
         }).format(amount)
 
         return <div className="flex items-center font-medium">{formatted}</div>
-      },
-      meta: {
-        label: "Amount",
-        variant: "range",
-        icon: DollarSign
-      },
-      enableColumnFilter: false
+      }
     },
     {
       id: "currency",
@@ -124,19 +97,7 @@ export function getTransactionsTableColumns({
             {currency}
           </Badge>
         )
-      },
-      meta: {
-        label: "Currency",
-        variant: "select",
-        options: [
-          { label: "USD", value: "USD" },
-          { label: "EUR", value: "EUR" },
-          { label: "INR", value: "INR" },
-          { label: "GBP", value: "GBP" }
-        ],
-        icon: DollarSign
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "type",
@@ -151,18 +112,7 @@ export function getTransactionsTableColumns({
             {type}
           </Badge>
         )
-      },
-      meta: {
-        label: "Transaction Type",
-        variant: "multiSelect",
-        options: [
-          { label: "Income", value: "income" },
-          { label: "Expense", value: "expense" },
-          { label: "Transfer", value: "transfer" }
-        ],
-        icon: CreditCard
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "status",
@@ -184,19 +134,7 @@ export function getTransactionsTableColumns({
             {status}
           </Badge>
         )
-      },
-      meta: {
-        label: "Status",
-        variant: "multiSelect",
-        options: [
-          { label: "Pending", value: "pending" },
-          { label: "Completed", value: "completed" },
-          { label: "Failed", value: "failed" },
-          { label: "Cancelled", value: "cancelled" }
-        ],
-        icon: FileText
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "paymentMethod",
@@ -230,21 +168,7 @@ export function getTransactionsTableColumns({
         ) : (
           <span className="text-muted-foreground">-</span>
         )
-      },
-      meta: {
-        label: "Payment Method",
-        variant: "multiSelect",
-        options: [
-          { label: "Credit Card", value: "credit_card" },
-          { label: "Debit Card", value: "debit_card" },
-          { label: "Bank Transfer", value: "bank_transfer" },
-          { label: "Cash", value: "cash" },
-          { label: "Check", value: "check" },
-          { label: "Digital Wallet", value: "digital_wallet" }
-        ],
-        icon: CreditCard
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "transactionDate",
@@ -253,13 +177,7 @@ export function getTransactionsTableColumns({
       cell: ({ row }) => {
         const date = row.getValue("transactionDate") as string
         return <div className="text-sm">{formatDate(date)}</div>
-      },
-      meta: {
-        label: "Transaction Date",
-        variant: "date",
-        icon: Calendar
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "counterpartyName",
@@ -272,13 +190,7 @@ export function getTransactionsTableColumns({
         ) : (
           <span className="text-muted-foreground">-</span>
         )
-      },
-      meta: {
-        label: "Counterparty Name",
-        variant: "text",
-        icon: User
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "categorySlug",
@@ -299,25 +211,7 @@ export function getTransactionsTableColumns({
             {getCategoryLabel(categorySlug)}
           </Badge>
         )
-      },
-      meta: {
-        label: "Category",
-        variant: "select",
-        options: [
-          { label: "Food & Dining", value: "food-dining" },
-          { label: "Transportation", value: "transportation" },
-          { label: "Shopping", value: "shopping" },
-          { label: "Entertainment", value: "entertainment" },
-          { label: "Bills & Utilities", value: "bills-utilities" },
-          { label: "Healthcare", value: "healthcare" },
-          { label: "Education", value: "education" },
-          { label: "Travel", value: "travel" },
-          { label: "Business", value: "business" },
-          { label: "Other", value: "other" }
-        ],
-        icon: Tag
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "isRecurring",
@@ -330,17 +224,7 @@ export function getTransactionsTableColumns({
             {isRecurring ? "Yes" : "No"}
           </Badge>
         )
-      },
-      meta: {
-        label: "Is Recurring",
-        variant: "select",
-        options: [
-          { label: "Yes", value: "true" },
-          { label: "No", value: "false" }
-        ],
-        icon: RefreshCw
-      },
-      enableColumnFilter: true
+      }
     },
     {
       id: "createdAt",
@@ -350,12 +234,6 @@ export function getTransactionsTableColumns({
         const date = row.getValue("createdAt") as string
         return <div className="text-sm">{formatDate(date)}</div>
       },
-      meta: {
-        label: "Created At",
-        variant: "dateRange",
-        icon: Calendar
-      },
-      enableColumnFilter: false,
       enableSorting: false
     },
     {
