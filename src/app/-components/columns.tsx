@@ -39,7 +39,7 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 40
+    size: 50
   },
   {
     id: "id",
@@ -112,8 +112,7 @@ export const columns: ColumnDef<Transaction>[] = [
           {type}
         </Badge>
       )
-    },
-    size: 100
+    }
   },
   {
     id: "status",
@@ -134,8 +133,7 @@ export const columns: ColumnDef<Transaction>[] = [
           {status}
         </Badge>
       )
-    },
-    size: 110
+    }
   },
   {
     id: "transactionDate",
@@ -153,13 +151,8 @@ export const columns: ColumnDef<Transaction>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Counterparty" />,
     cell: ({ row }) => {
       const counterpartyName = row.getValue("counterpartyName") as string | null
-      return counterpartyName ? (
-        <div className="truncate">{counterpartyName}</div>
-      ) : (
-        <span className="text-muted-foreground">—</span>
-      )
-    },
-    size: 150
+      return counterpartyName ? <div>{counterpartyName}</div> : <span className="text-muted-foreground">—</span>
+    }
   },
   {
     id: "actions",

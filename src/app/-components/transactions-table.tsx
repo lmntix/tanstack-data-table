@@ -53,18 +53,21 @@ export function TransactionsTable() {
     data,
     columns,
     containerHeight: "calc(100vh - 200px)",
+    defaultColumn: {
+      size: 250
+    },
     rowHeight: 50,
     initialState: {
       columnPinning: { right: ["actions"], left: ["select"] },
       columnVisibility: {
-        // id: false,
-        // description: false,
-        // createdAt: false,
-        // updatedAt: false,
-        // metadata: false,
-        // tags: false,
-        // notes: false,
-        // isInternal: false
+        id: false,
+        description: false,
+        createdAt: false,
+        updatedAt: false,
+        reference: false,
+        tags: false,
+        notes: false,
+        isInternal: false
       }
     },
     getRowId: (originalRow) => originalRow.id.toString(),
