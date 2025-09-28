@@ -40,6 +40,7 @@ export const getTransactionsParamsSchema = z
 export const getTransactions = createServerFn({ method: "GET" })
   .inputValidator(getTransactionsParamsSchema)
   .handler(async ({ data: params }) => {
+    console.log("getTransactions called with params: ", params)
     const {
       cursor,
       pageSize = 20,
@@ -61,7 +62,8 @@ export const getTransactions = createServerFn({ method: "GET" })
       reference,
       isInternal
     } = params
-
+    //add delay to simulate loading
+    // await new Promise((resolve) => setTimeout(resolve, 1000))
     const whereConditions = []
 
     // Search across name, description, counterparty, and reference

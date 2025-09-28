@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
       ...search,
       sort: search.sort && search.sort.length > 0 ? [search.sort[0].id, search.sort[0].desc ? "desc" : "asc"] : null
     }
-    await context.queryClient.ensureInfiniteQueryData(getTransactionsInfiniteOptions(apiParams))
+    context.queryClient.prefetchInfiniteQuery(getTransactionsInfiniteOptions(apiParams))
   }
 })
 

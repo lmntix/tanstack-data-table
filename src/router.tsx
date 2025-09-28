@@ -10,7 +10,7 @@ export function getRouter() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        staleTime: 10
+        staleTime: 0
       }
     }
   })
