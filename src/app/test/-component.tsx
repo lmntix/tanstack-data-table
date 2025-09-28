@@ -1,9 +1,17 @@
 import { useVirtualizer } from "@tanstack/react-virtual"
-import { ArrowDown, ArrowUp, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, Edit, Eye, MoreHorizontal, Settings, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Mock data generator with delay
@@ -18,8 +26,38 @@ const generateMockData = (count = 1000) => {
     department: ["Engineering", "Marketing", "Sales", "HR"][i % 4],
     projects: Math.floor(Math.random() * 10) + 1,
     invoices: Math.floor(Math.random() * 50) + 1,
-    tags: ["React", "TypeScript", "Node.js"][i % 3]
+    tags: ["React", "TypeScript", "Node.js"][i % 3],
+    phone: `+1 (555) ${String(Math.floor(Math.random() * 900) + 100)}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+    location: ["New York", "San Francisco", "London", "Tokyo"][i % 4]
   }))
+}
+
+// Column visibility control component
+const ColumnVisibilityControl = ({ columns, visibleColumns, onVisibilityChange }) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="h-8">
+          <Settings className="mr-2 h-4 w-4" />
+          Columns
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[200px]">
+        <DropdownMenuLabel>Column Visibility</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {columns.map((column) => (
+          <DropdownMenuCheckboxItem
+            key={column.key}
+            className="capitalize"
+            checked={visibleColumns.has(column.key)}
+            onCheckedChange={(checked) => onVisibilityChange(column.key, checked)}
+          >
+            {column.header}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
 }
 
 // Loading skeleton component
@@ -34,17 +72,24 @@ const DataTableSkeleton = ({ rows = 10, columns, height, rowHeight = 52 }) => {
         <div className="border-b bg-muted/50">
           <div className="flex h-12 items-center">
             <div
-              className="flex h-4 w-4 items-center justify-center px-4"
-              style={{ minWidth: `${selectColumnWidth}px` }}
+              className="flex h-4 w-4 items-center justify-center border-r bg-background px-4"
+              style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
             >
               <Skeleton className="h-4 w-4" />
             </div>
             {columns.map((column, index) => (
-              <div key={index} className="flex items-center px-4 py-2" style={{ minWidth: `${column.width || 150}px` }}>
+              <div
+                key={index}
+                className="flex items-center border-r px-4 py-2"
+                style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
+              >
                 <Skeleton className="h-4 w-20" />
               </div>
             ))}
-            <div className="flex items-center justify-center px-4" style={{ minWidth: `${actionsColumnWidth}px` }}>
+            <div
+              className="flex items-center justify-center border-l bg-background px-4"
+              style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
+            >
               <Skeleton className="h-4 w-12" />
             </div>
           </div>
@@ -54,19 +99,25 @@ const DataTableSkeleton = ({ rows = 10, columns, height, rowHeight = 52 }) => {
         <div style={{ height: `${height - 48}px` }} className="overflow-hidden">
           {Array.from({ length: rows }).map((_, rowIndex) => (
             <div key={rowIndex} className="flex items-center border-b" style={{ height: `${rowHeight}px` }}>
-              <div className="flex items-center justify-center px-4" style={{ minWidth: `${selectColumnWidth}px` }}>
+              <div
+                className="flex items-center justify-center border-r bg-background px-4"
+                style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
+              >
                 <Skeleton className="h-4 w-4" />
               </div>
               {columns.map((column, colIndex) => (
                 <div
                   key={colIndex}
-                  className="flex items-center px-4 py-2"
-                  style={{ minWidth: `${column.width || 150}px` }}
+                  className="flex items-center border-r px-4 py-2"
+                  style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
                 >
                   <Skeleton className="h-4 w-full max-w-[80%]" />
                 </div>
               ))}
-              <div className="flex items-center justify-center px-4" style={{ minWidth: `${actionsColumnWidth}px` }}>
+              <div
+                className="flex items-center justify-center border-l bg-background px-4"
+                style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
+              >
                 <Skeleton className="h-8 w-8" />
               </div>
             </div>
@@ -102,7 +153,7 @@ const SortableHeader = ({ children, sortKey, currentSort, onSort, className = ""
     <Button
       variant="ghost"
       size="sm"
-      className={`h-auto p-0 font-medium hover:bg-transparent ${className}`}
+      className={`h-auto justify-start p-0 font-medium hover:bg-transparent ${className}`}
       onClick={handleSort}
     >
       <span>{children}</span>
@@ -155,12 +206,35 @@ const DataTable = ({
   rowHeight = 52,
   loading = false,
   currentSort = null,
-  className = ""
+  className = "",
+  defaultHiddenColumns = []
 }) => {
   const [selectedRows, setSelectedRows] = useState(new Set())
+  const [visibleColumns, setVisibleColumns] = useState(() => {
+    const visible = new Set(columns.map((col) => col.key))
+    defaultHiddenColumns.forEach((key) => visible.delete(key))
+    return visible
+  })
+
   const tableRef = useRef(null)
   const headerRef = useRef(null)
   const bodyRef = useRef(null)
+
+  // Filter visible columns
+  const filteredColumns = useMemo(() => columns.filter((col) => visibleColumns.has(col.key)), [columns, visibleColumns])
+
+  // Handle column visibility change
+  const handleVisibilityChange = useCallback((columnKey, visible) => {
+    setVisibleColumns((prev) => {
+      const newSet = new Set(prev)
+      if (visible) {
+        newSet.add(columnKey)
+      } else {
+        newSet.delete(columnKey)
+      }
+      return newSet
+    })
+  }, [])
 
   // Sync horizontal scroll between header and body
   const handleBodyScroll = useCallback((e) => {
@@ -219,7 +293,7 @@ const DataTable = ({
   // Calculate widths
   const selectColumnWidth = selectable ? 50 : 0
   const actionsColumnWidth = actions ? 80 : 0
-  const contentColumnsWidth = columns.reduce((sum, col) => sum + (col.width || 150), 0)
+  const contentColumnsWidth = filteredColumns.reduce((sum, col) => sum + (col.width || 150), 0)
   const totalWidth = selectColumnWidth + contentColumnsWidth + actionsColumnWidth
 
   if (loading) {
@@ -227,7 +301,7 @@ const DataTable = ({
       <div className={className}>
         <DataTableSkeleton
           rows={Math.floor((height - 48) / rowHeight)}
-          columns={columns}
+          columns={filteredColumns}
           height={height}
           rowHeight={rowHeight}
         />
@@ -236,141 +310,161 @@ const DataTable = ({
   }
 
   return (
-    <div className={`rounded-md border ${className}`} ref={tableRef}>
-      <div className="relative">
-        {/* Sticky Header */}
-        <div
-          ref={headerRef}
-          className="sticky top-0 z-10 overflow-hidden border-b bg-background"
-          onScroll={handleHeaderScroll}
-        >
-          <div style={{ width: `${totalWidth}px` }} className="flex h-12 items-center">
-            {/* Select Column Header */}
-            {selectable && (
-              <div
-                className="sticky left-0 z-20 flex items-center justify-center bg-background px-4"
-                style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
-              >
-                <Checkbox
-                  checked={isAllSelected}
-                  ref={(el) => {
-                    if (el) el.indeterminate = isIndeterminate
-                  }}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all"
-                />
-              </div>
-            )}
-
-            {/* Content Column Headers */}
-            {columns.map((column, index) => (
-              <div
-                key={column.key || index}
-                className="flex items-center px-4 py-2 text-left"
-                style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
-              >
-                {column.sortable ? (
-                  <SortableHeader sortKey={column.key} currentSort={currentSort} onSort={onSort}>
-                    {column.header}
-                  </SortableHeader>
-                ) : (
-                  <span className="font-medium text-sm">{column.header}</span>
-                )}
-              </div>
-            ))}
-
-            {/* Actions Column Header */}
-            {actions && (
-              <div
-                className="sticky right-0 z-20 flex items-center justify-center bg-background px-4"
-                style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
-              >
-                <span className="font-medium text-sm">Actions</span>
-              </div>
-            )}
-          </div>
+    <div className={`space-y-4 ${className}`}>
+      {/* Column Visibility Control */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <h2 className="font-semibold text-lg">Data Table</h2>
+          <span className="text-muted-foreground text-sm">({data.length.toLocaleString()} rows)</span>
         </div>
-
-        {/* Scrollable Body */}
-        <div ref={bodyRef} className="overflow-auto" style={{ height: `${height - 48}px` }} onScroll={handleBodyScroll}>
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: `${totalWidth}px`,
-              position: "relative"
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const row = data[virtualRow.index]
-              const isSelected = selectedRows.has(row.id)
-
-              return (
-                <div
-                  key={virtualRow.key}
-                  className={`absolute flex w-full items-center border-b transition-colors hover:bg-muted/50 ${
-                    isSelected ? "bg-muted" : ""
-                  }`}
-                  style={{
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`
-                  }}
-                >
-                  {/* Select Column Cell */}
-                  {selectable && (
-                    <div
-                      className="sticky left-0 z-10 flex items-center justify-center bg-background px-4"
-                      style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
-                    >
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={(checked) => handleRowSelect(row.id, checked)}
-                        aria-label={`Select row ${row.id}`}
-                      />
-                    </div>
-                  )}
-
-                  {/* Content Cells */}
-                  {columns.map((column, colIndex) => {
-                    const cellValue = column.accessor ? column.accessor(row) : row[column.key]
-                    const displayValue = column.render ? column.render(cellValue, row) : cellValue
-
-                    return (
-                      <div
-                        key={column.key || colIndex}
-                        className="flex items-center px-4 py-2 text-sm"
-                        style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
-                      >
-                        <div className="truncate" title={String(cellValue)}>
-                          {displayValue}
-                        </div>
-                      </div>
-                    )
-                  })}
-
-                  {/* Actions Column Cell */}
-                  {actions && (
-                    <div
-                      className="sticky right-0 z-10 flex items-center justify-center bg-background px-4"
-                      style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
-                    >
-                      <DataTableRowActions row={row} onAction={onAction} />
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
+        <ColumnVisibilityControl
+          columns={columns}
+          visibleColumns={visibleColumns}
+          onVisibilityChange={handleVisibilityChange}
+        />
       </div>
 
-      {/* Selection Footer */}
-      {selectedRows.size > 0 && (
-        <div className="flex items-center justify-between border-t px-4 py-2 text-muted-foreground text-sm">
-          <span>
-            {selectedRows.size} of {data.length} row(s) selected
-          </span>
+      <div className="rounded-md border" ref={tableRef}>
+        <div className="relative">
+          {/* Sticky Header */}
+          <div
+            ref={headerRef}
+            className="sticky top-0 z-10 overflow-hidden border-b bg-background"
+            onScroll={handleHeaderScroll}
+          >
+            <div style={{ width: `${totalWidth}px` }} className="flex h-12 items-center">
+              {/* Select Column Header */}
+              {selectable && (
+                <div
+                  className="sticky left-0 z-20 flex items-center justify-center border-r bg-background px-4"
+                  style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
+                >
+                  <Checkbox
+                    checked={isAllSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = isIndeterminate
+                    }}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all"
+                  />
+                </div>
+              )}
+
+              {/* Content Column Headers */}
+              {filteredColumns.map((column, index) => (
+                <div
+                  key={column.key || index}
+                  className="flex items-center border-r px-4 py-2 text-left"
+                  style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
+                >
+                  {column.sortable ? (
+                    <SortableHeader sortKey={column.key} currentSort={currentSort} onSort={onSort}>
+                      {column.header}
+                    </SortableHeader>
+                  ) : (
+                    <span className="font-medium text-sm">{column.header}</span>
+                  )}
+                </div>
+              ))}
+
+              {/* Actions Column Header */}
+              {actions && (
+                <div
+                  className="sticky right-0 z-20 flex items-center justify-center border-l bg-background px-4"
+                  style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
+                >
+                  <span className="font-medium text-sm">Actions</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Scrollable Body */}
+          <div
+            ref={bodyRef}
+            className="overflow-auto"
+            style={{ height: `${height - 48}px` }}
+            onScroll={handleBodyScroll}
+          >
+            <div
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: `${totalWidth}px`,
+                position: "relative"
+              }}
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const row = data[virtualRow.index]
+                const isSelected = selectedRows.has(row.id)
+
+                return (
+                  <div
+                    key={virtualRow.key}
+                    className={`absolute flex w-full items-center border-b transition-colors hover:bg-muted/50 ${
+                      isSelected ? "bg-muted" : ""
+                    }`}
+                    style={{
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`
+                    }}
+                  >
+                    {/* Select Column Cell */}
+                    {selectable && (
+                      <div
+                        className="sticky left-0 z-10 flex items-center justify-center border-r bg-background px-4"
+                        style={{ width: `${selectColumnWidth}px`, minWidth: `${selectColumnWidth}px` }}
+                      >
+                        <Checkbox
+                          checked={isSelected}
+                          onCheckedChange={(checked) => handleRowSelect(row.id, checked)}
+                          aria-label={`Select row ${row.id}`}
+                        />
+                      </div>
+                    )}
+
+                    {/* Content Cells */}
+                    {filteredColumns.map((column, colIndex) => {
+                      const cellValue = column.accessor ? column.accessor(row) : row[column.key]
+                      const displayValue = column.render ? column.render(cellValue, row) : cellValue
+
+                      return (
+                        <div
+                          key={column.key || colIndex}
+                          className="flex items-center border-r px-4 py-2 text-sm"
+                          style={{ width: `${column.width || 150}px`, minWidth: `${column.width || 150}px` }}
+                        >
+                          <div className="truncate" title={String(cellValue)}>
+                            {displayValue}
+                          </div>
+                        </div>
+                      )
+                    })}
+
+                    {/* Actions Column Cell */}
+                    {actions && (
+                      <div
+                        className="sticky right-0 z-10 flex items-center justify-center border-l bg-background px-4"
+                        style={{ width: `${actionsColumnWidth}px`, minWidth: `${actionsColumnWidth}px` }}
+                      >
+                        <DataTableRowActions row={row} onAction={onAction} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Selection Footer */}
+        {selectedRows.size > 0 && (
+          <div className="flex items-center justify-between border-t px-4 py-2 text-muted-foreground text-sm">
+            <span>
+              {selectedRows.size} of {data.length} row(s) selected
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -454,23 +548,35 @@ const DataTableDemo = () => {
         )
       },
       {
+        key: "phone",
+        header: "Phone",
+        width: 150,
+        sortable: true
+      },
+      {
+        key: "location",
+        header: "Location",
+        width: 120,
+        sortable: true
+      },
+      {
         key: "projects",
         header: "Projects",
         width: 100,
         sortable: true,
-        render: (value) => <span className="text-right">{value}</span>
+        render: (value) => <span className="text-right font-mono">{value}</span>
       },
       {
         key: "invoices",
         header: "Invoices",
         width: 100,
         sortable: true,
-        render: (value) => <span className="text-right">{value}</span>
+        render: (value) => <span className="text-right font-mono">{value}</span>
       },
       {
         key: "tags",
         header: "Tags",
-        width: 150,
+        width: 120,
         sortable: false,
         render: (value) => (
           <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 font-medium text-blue-700 text-xs ring-1 ring-blue-700/10 ring-inset">
@@ -514,7 +620,7 @@ const DataTableDemo = () => {
       <div className="space-y-2">
         <h1 className="font-bold text-3xl tracking-tight">Production DataTable</h1>
         <p className="text-muted-foreground">
-          A production-ready data table with TanStack Virtual, shadcn/ui components, and synchronized scrolling.
+          Advanced data table with column visibility, synchronized scrolling, and proper alignment.
         </p>
       </div>
 
@@ -530,6 +636,7 @@ const DataTableDemo = () => {
         rowHeight={52}
         loading={loading}
         currentSort={currentSort}
+        defaultHiddenColumns={["phone", "location", "invoices"]} // Hide some columns by default
         className="w-full"
       />
 
@@ -540,6 +647,22 @@ const DataTableDemo = () => {
             {selectedRows.length} rows selected: {selectedRows.slice(0, 5).join(", ")}
             {selectedRows.length > 5 && ` and ${selectedRows.length - 5} more...`}
           </p>
+        </div>
+      )}
+
+      {!loading && (
+        <div className="rounded-lg border bg-muted/50 p-4 text-muted-foreground text-sm">
+          <h4 className="font-medium text-foreground">Enhanced Features</h4>
+          <ul className="mt-2 space-y-1">
+            <li>✅ Perfect header-row width alignment</li>
+            <li>✅ Full background color on pinned columns</li>
+            <li>✅ Vertical borders for column separation</li>
+            <li>✅ Column visibility control dropdown</li>
+            <li>✅ Some columns hidden by default (Phone, Location, Invoices)</li>
+            <li>✅ TanStack Virtual for performance</li>
+            <li>✅ Synchronized horizontal scrolling</li>
+            <li>✅ Professional UI with shadcn/ui</li>
+          </ul>
         </div>
       )}
     </div>
