@@ -180,6 +180,7 @@ export const columns: ColumnDef<Transaction>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 60
+    size: 45,
+    minSize: 60
   }
 ]

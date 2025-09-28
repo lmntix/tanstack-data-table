@@ -95,7 +95,7 @@ export function DataTableColumnHeader<TData, TValue>({
       <Button
         variant="ghost"
         size="sm"
-        className={cn("h-8 p-0 font-normal hover:bg-transparent flex items-center gap-1.5 cursor-pointer", className)}
+        className={cn("h-8 p-0 font-bold hover:bg-transparent flex items-center gap-1.5 cursor-pointer", className)}
         onClick={handleSortToggle}
         {...props}
       >
@@ -115,7 +115,7 @@ export function DataTableColumnHeader<TData, TValue>({
             variant="ghost"
             size="sm"
             className={cn(
-              "h-8 p-0 font-normal hover:bg-transparent flex items-center gap-1.5",
+              "h-8 p-0 text-sm hover:bg-transparent flex items-center gap-1.5",
               column.getCanSort() ? "cursor-pointer" : "cursor-default",
               className
             )}

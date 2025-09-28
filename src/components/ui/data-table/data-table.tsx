@@ -35,6 +35,12 @@ export function DataTable<TData>({
   const headerGroups = table.getHeaderGroups()
   const rows = table.getRowModel().rows
 
+  // Calculate total table width to ensure full-width styling
+  const totalTableWidth =
+    headerGroups[0]?.headers.reduce((total, header) => {
+      return total + header.getSize()
+    }, 0) || 0
+
   // Loading skeleton component
   const LoadingSkeleton = () => (
     <DataTableSkeleton
@@ -46,7 +52,10 @@ export function DataTable<TData>({
 
   // No data component
   const NoData = () => (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
+    <div
+      className="flex flex-col items-center justify-center py-16 text-center bg-background"
+      style={{ width: `${totalTableWidth}px`, minWidth: `${totalTableWidth}px` }}
+    >
       <div className="text-muted-foreground text-sm">
         <div className="mb-2">No data found</div>
         <div className="text-xs">Try adjusting your filters or create a new record</div>
@@ -63,9 +72,22 @@ export function DataTable<TData>({
         onScroll={handleScroll}
       >
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-background backdrop-blur-sm border-b w-full">
+        <div
+          className="sticky top-0 z-10 bg-background backdrop-blur-sm border-b"
+          style={{
+            width: `${totalTableWidth}px`,
+            minWidth: `${totalTableWidth}px`
+          }}
+        >
           {headerGroups.map((headerGroup) => (
-            <div key={headerGroup.id} className="flex w-full">
+            <div
+              key={headerGroup.id}
+              className="flex"
+              style={{
+                width: `${totalTableWidth}px`,
+                minWidth: `${totalTableWidth}px`
+              }}
+            >
               {headerGroup.headers.map((header) => {
                 const isPinned = header.column.getIsPinned()
                 const isLeft = isPinned === "left"
@@ -75,7 +97,7 @@ export function DataTable<TData>({
                   <div
                     key={header.id}
                     className={cn(
-                      "flex items-center h-12 px-4 text-left align-middle font-normal text-muted-foreground border-r text-sm",
+                      "flex items-center h-12 px-4 text-left align-middle text-muted-foreground border-r",
                       "[&:has([role=checkbox])]:pr-0",
                       isLeft && "sticky left-0 z-20 bg-background backdrop-blur-sm",
                       isRight && "sticky right-0 z-20 bg-background backdrop-blur-sm"
@@ -113,7 +135,8 @@ export function DataTable<TData>({
             style={{
               height: `${totalSize}px`,
               position: "relative",
-              width: "100%"
+              width: `${totalTableWidth}px`,
+              minWidth: `${totalTableWidth}px`
             }}
           >
             {virtualItems.map((virtualRow) => {
@@ -124,14 +147,16 @@ export function DataTable<TData>({
                 <div
                   key={row.id}
                   className={cn(
-                    "flex border-b transition-colors hover:bg-muted/50 w-full text-sm",
+                    "flex border-b transition-colors hover:bg-muted/50 text-sm bg-background",
                     row.getIsSelected() && "bg-muted",
                     onRowClick && "cursor-pointer"
                   )}
                   style={{
                     position: "absolute",
                     transform: `translateY(${virtualRow.start}px)`,
-                    height: `${virtualRow.size}px`
+                    height: `${virtualRow.size}px`,
+                    width: `${totalTableWidth}px`,
+                    minWidth: `${totalTableWidth}px`
                   }}
                   onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 >
@@ -177,13 +202,25 @@ export function DataTable<TData>({
 
         {/* Loading indicators */}
         {isFetchingNextPage && (
-          <div className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10">
+          <div
+            className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10"
+            style={{
+              width: `${totalTableWidth}px`,
+              minWidth: `${totalTableWidth}px`
+            }}
+          >
             Loading more...
           </div>
         )}
 
         {!hasNextPage && rows.length > 0 && !isLoading && (
-          <div className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10">
+          <div
+            className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10"
+            style={{
+              width: `${totalTableWidth}px`,
+              minWidth: `${totalTableWidth}px`
+            }}
+          >
             No more data to load
           </div>
         )}
