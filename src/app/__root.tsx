@@ -9,6 +9,7 @@ import NotFoundComponent from "@/components/not-found"
 import Providers from "@/components/providers"
 import appCss from "@/styles.css?url"
 import "nprogress/nprogress.css"
+import AppHeader from "@/components/header"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -126,7 +127,10 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
         `}</style>
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppHeader />
+          {children}
+        </Providers>
 
         <Scripts />
       </body>

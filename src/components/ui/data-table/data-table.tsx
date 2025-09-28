@@ -94,7 +94,7 @@ export function DataTable<TData>({
                       "flex items-center h-12 px-4 text-left align-middle text-muted-foreground border-r",
                       "[&:has([role=checkbox])]:pr-0",
                       isLeft && "sticky left-0 z-20 bg-background backdrop-blur-sm",
-                      isRight && "sticky right-0 z-20 bg-background backdrop-blur-sm"
+                      isRight && "sticky border-l right-0 z-20 bg-background backdrop-blur-sm"
                     )}
                     style={{
                       // For responsive columns, don't set width - let flex handle it
@@ -180,7 +180,7 @@ export function DataTable<TData>({
                           "flex items-center p-4 align-middle border-r",
                           "[&:has([role=checkbox])]:pr-0",
                           isLeft && "sticky left-0 z-10 bg-background",
-                          isRight && "sticky right-0 z-10 bg-background"
+                          isRight && "sticky border-l right-0 z-10 bg-background"
                         )}
                         style={{
                           // For responsive columns, don't set width - let flex handle it
@@ -221,19 +221,13 @@ export function DataTable<TData>({
 
         {/* Loading indicators */}
         {isFetchingNextPage && (
-          <div
-            className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10 w-full"
-            style={{ minWidth: `${minTableWidth}px` }}
-          >
+          <div className="bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10 w-full">
             Loading more...
           </div>
         )}
 
         {!hasNextPage && rows.length > 0 && !isLoading && (
-          <div
-            className="sticky bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10 w-full"
-            style={{ minWidth: `${minTableWidth}px` }}
-          >
+          <div className=" bottom-0 flex items-center justify-center p-4 text-sm text-muted-foreground bg-background border-t z-10 w-full">
             No more data to load
           </div>
         )}

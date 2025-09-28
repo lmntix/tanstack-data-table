@@ -73,7 +73,8 @@ export const columns: ColumnDef<Transaction>[] = [
       const name = row.getValue("name") as string
       return <div className="font-mono text-xs">{name}</div>
     },
-    size: 200
+    size: 200,
+    enableSorting: false
   },
   {
     id: "description",
@@ -83,7 +84,8 @@ export const columns: ColumnDef<Transaction>[] = [
       const description = row.getValue("description") as string | null
       return <div className="truncate">{description || "No description"}</div>
     },
-    size: 250
+    size: 250,
+    enableSorting: false
   },
   {
     id: "amount",
@@ -98,7 +100,8 @@ export const columns: ColumnDef<Transaction>[] = [
       }).format(amount)
       return <div className="truncate font-mono text-sm">{formatted}</div>
     },
-    size: 130
+    size: 130,
+    enableSorting: false
   },
   {
     id: "type",
@@ -112,7 +115,8 @@ export const columns: ColumnDef<Transaction>[] = [
           {type}
         </Badge>
       )
-    }
+    },
+    enableSorting: false
   },
   {
     id: "status",
@@ -133,7 +137,8 @@ export const columns: ColumnDef<Transaction>[] = [
           {status}
         </Badge>
       )
-    }
+    },
+    enableSorting: false
   },
   {
     id: "transactionDate",
@@ -143,7 +148,8 @@ export const columns: ColumnDef<Transaction>[] = [
       const date = row.getValue("transactionDate") as string
       return <div className="truncate font-mono text-sm">{formatDate(date)}</div>
     },
-    size: 120
+    size: 120,
+    enableSorting: false
   },
   {
     id: "counterpartyName",
@@ -152,7 +158,8 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       const counterpartyName = row.getValue("counterpartyName") as string | null
       return counterpartyName ? <div>{counterpartyName}</div> : <span className="text-muted-foreground">—</span>
-    }
+    },
+    enableSorting: false
   },
   {
     id: "actions",
