@@ -38,10 +38,10 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   return (
     <div className="container mx-auto px-4 py-4">
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h1 className="font-bold text-2xl">Transactions</h1>
         <p className="text-muted-foreground">Manage your organization's transactions</p>
-      </div>
+      </div> */}
 
       <Suspense
         fallback={

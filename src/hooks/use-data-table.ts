@@ -37,7 +37,7 @@ interface UseDataTableProps<TData>
   clearOnDefault?: boolean
   shallow?: boolean
   onRowClick?: (row: TData) => void
-  estimateSize?: number
+  rowHeight?: number
   overscan?: number
   containerHeight?: string | number
 }
@@ -49,7 +49,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     debounceMs = DEBOUNCE_MS,
     shallow = true,
     onRowClick,
-    estimateSize = 60,
+    rowHeight = 60,
     overscan = 10,
     containerHeight = "600px",
     ...tableProps
@@ -161,7 +161,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => estimateSize,
+    estimateSize: () => rowHeight,
     overscan
   })
 

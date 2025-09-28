@@ -1,8 +1,8 @@
 // components/ui/data-table/data-table.tsx
 import { flexRender } from "@tanstack/react-table"
-import { Skeleton } from "@/components/ui/skeleton"
 import type { useDataTable } from "@/hooks/use-data-table"
 import { cn } from "@/lib/utils"
+import { DataTableSkeleton } from "./data-table-skeleton"
 
 interface DataTableProps<TData> {
   dataTable: ReturnType<typeof useDataTable<TData>>
@@ -37,30 +37,19 @@ export function DataTable<TData>({
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
-    <div className="space-y-2 p-4">
-      {Array.from({ length: 10 }).map((_, index) => (
-        <div key={index} className="flex space-x-4">
-          <Skeleton className="h-4 w-8" />
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-4 w-48" />
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-4 w-8" />
-        </div>
-      ))}
-    </div>
+    <DataTableSkeleton
+      cellWidths={["10rem", "30rem", "10rem", "10rem", "6rem", "6rem", "6rem"]}
+      columnCount={6}
+      shrinkZero
+    />
   )
 
   // No data component
   const NoData = () => (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="text-muted-foreground text-sm">
-        <div className="mb-2">No transactions found</div>
-        <div className="text-xs">Try adjusting your filters or create a new transaction</div>
+        <div className="mb-2">No data found</div>
+        <div className="text-xs">Try adjusting your filters or create a new record</div>
       </div>
     </div>
   )
@@ -74,7 +63,7 @@ export function DataTable<TData>({
         onScroll={handleScroll}
       >
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-muted/80 backdrop-blur-sm border-b w-full">
+        <div className="sticky top-0 z-10 bg-background backdrop-blur-sm border-b w-full">
           {headerGroups.map((headerGroup) => (
             <div key={headerGroup.id} className="flex w-full">
               {headerGroup.headers.map((header) => {
@@ -88,8 +77,8 @@ export function DataTable<TData>({
                     className={cn(
                       "flex items-center h-12 px-4 text-left align-middle font-normal text-muted-foreground border-r text-sm",
                       "[&:has([role=checkbox])]:pr-0",
-                      isLeft && "sticky left-0 z-20 bg-muted/80 backdrop-blur-sm",
-                      isRight && "sticky right-0 z-20 bg-muted/80 backdrop-blur-sm"
+                      isLeft && "sticky left-0 z-20 bg-background backdrop-blur-sm",
+                      isRight && "sticky right-0 z-20 bg-background backdrop-blur-sm"
                     )}
                     style={{
                       width: `${header.getSize()}px`,

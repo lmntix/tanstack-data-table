@@ -62,7 +62,8 @@ export const columns: ColumnDef<Transaction>[] = [
       const reference = row.getValue("reference") as string | null
       return reference ? <div>{reference}</div> : <span className="text-muted-foreground">—</span>
     },
-    size: 220
+    size: 220,
+    enableSorting: false
   },
   {
     id: "name",

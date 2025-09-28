@@ -52,7 +52,8 @@ export function TransactionsTable() {
   const dataTable = useDataTable({
     data,
     columns,
-    containerHeight: "calc(100vh - 250px)",
+    containerHeight: "calc(100vh - 200px)",
+    rowHeight: 50,
     initialState: {
       columnPinning: { right: ["actions"], left: ["select"] },
       columnVisibility: {
@@ -83,13 +84,35 @@ export function TransactionsTable() {
         isFetchingNextPage={infiniteQuery.isFetchingNextPage}
       />
 
-      <div className="flex items-center justify-between px-2">
+      {/* <div className="flex items-center justify-between px-2">
         <div className="flex-1 text-muted-foreground text-sm">
           {dataTable.table.getFilteredSelectedRowModel().rows.length} of {data.length} row(s) selected.
         </div>
         <div className="text-muted-foreground text-sm">
           Loaded {data.length} transactions
           {infiniteQuery.hasNextPage && " (more available)"}
+        </div>
+      </div> */}
+
+      <div className="flex w-full items-center justify-between bg-muted/50 px-3 py-2 text-sm" aria-live="polite">
+        <div className="flex-1 text-muted-foreground leading-6">
+          <span className="font-medium text-foreground tabular-nums">
+            {dataTable.table.getFilteredSelectedRowModel().rows.length}
+          </span>
+          <span className="mx-1">of</span>
+          <span className="font-medium text-foreground tabular-nums">{data.length}</span>
+          <span className="ml-1">row(s) selected</span>
+        </div>
+
+        <div className="whitespace-nowrap text-muted-foreground leading-6">
+          <span>Loaded </span>
+          <span className="font-medium text-foreground tabular-nums">{data.length}</span>
+          <span className="ml-1">transactions</span>
+          {infiniteQuery.hasNextPage && (
+            <span className="ml-2 rounded-full bg-muted px-2 py-0.5 font-medium text-foreground/80 text-xs">
+              more available
+            </span>
+          )}
         </div>
       </div>
 
